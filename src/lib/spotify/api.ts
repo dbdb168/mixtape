@@ -31,10 +31,10 @@ export async function createPlaylist(
   userId: string,
   name: string,
   trackUris: string[]
-): Promise<{ id: string; external_urls: { spotify: string } }> {
+): Promise<void> {
   // Create playlist
   const createResponse = await fetch(
-    `${SPOTIFY_API_URL}/users/${userId}/playlists`,
+    `https://api.spotify.com/v1/users/${userId}/playlists`,
     {
       method: 'POST',
       headers: {
@@ -43,8 +43,8 @@ export async function createPlaylist(
       },
       body: JSON.stringify({
         name,
-        description: 'Created with Mixtape - mixtape.fm',
-        public: false,
+        public: true,
+        description: 'Created with Mixtape',
       }),
     }
   );
@@ -56,7 +56,7 @@ export async function createPlaylist(
   const playlist = await createResponse.json();
 
   // Add tracks
-  await fetch(`${SPOTIFY_API_URL}/playlists/${playlist.id}/tracks`, {
+  await fetch(`https://api.spotify.com/v1/playlists/${playlist.id}/tracks`, {
     method: 'POST',
     headers: {
       Authorization: `Bearer ${accessToken}`,
@@ -64,6 +64,4 @@ export async function createPlaylist(
     },
     body: JSON.stringify({ uris: trackUris }),
   });
-
-  return playlist;
 }
