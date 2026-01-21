@@ -23,6 +23,7 @@ interface MixtapeFormData {
   recipientName: string;
   message: string;
   saveAsPlaylist: boolean;
+  photoUrl: string | null;
 }
 
 type Step = 'tracks' | 'personalize' | 'share';
@@ -73,6 +74,7 @@ export function CreateMixtapeClient() {
           recipientName: data.recipientName,
           message: data.message,
           saveAsPlaylist: data.saveAsPlaylist,
+          photoUrl: data.photoUrl,
           tracks: tracks.map((t) => ({
             id: t.id,
             name: t.name,

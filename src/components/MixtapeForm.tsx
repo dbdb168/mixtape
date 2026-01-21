@@ -1,12 +1,14 @@
 'use client';
 
 import { useState } from 'react';
+import { PhotoUpload } from '@/components/PhotoUpload';
 
 interface MixtapeFormData {
   title: string;
   recipientName: string;
   message: string;
   saveAsPlaylist: boolean;
+  photoUrl: string | null;
 }
 
 interface MixtapeFormProps {
@@ -20,6 +22,7 @@ export function MixtapeForm({ onSubmit, isSubmitting, initialData }: MixtapeForm
   const [recipientName, setRecipientName] = useState(initialData?.recipientName || '');
   const [message, setMessage] = useState(initialData?.message || '');
   const [saveAsPlaylist, setSaveAsPlaylist] = useState(initialData?.saveAsPlaylist || false);
+  const [photoUrl, setPhotoUrl] = useState<string | null>(initialData?.photoUrl || null);
 
   const TITLE_MAX = 50;
   const RECIPIENT_MAX = 50;
@@ -37,6 +40,7 @@ export function MixtapeForm({ onSubmit, isSubmitting, initialData }: MixtapeForm
       recipientName: recipientName.trim(),
       message: message.trim(),
       saveAsPlaylist,
+      photoUrl,
     });
   };
 
@@ -105,6 +109,12 @@ export function MixtapeForm({ onSubmit, isSubmitting, initialData }: MixtapeForm
           </span>
         </div>
       </div>
+
+      {/* Photo Upload */}
+      <PhotoUpload
+        onUploadComplete={setPhotoUrl}
+        currentPhotoUrl={photoUrl || undefined}
+      />
 
       {/* Save as Playlist Checkbox */}
       <div className="flex items-center gap-3">
