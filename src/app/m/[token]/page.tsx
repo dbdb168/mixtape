@@ -68,19 +68,22 @@ export async function generateMetadata({
 
   const trackCount = mixtape.tracks?.length || 0;
 
+  const senderName = mixtape.sender_name || 'Someone special';
+
   return {
-    title: `${mixtape.title} - A Mixtape for ${mixtape.recipient_name}`,
-    description: `A mixtape with ${trackCount} tracks for ${mixtape.recipient_name}. Listen now!`,
+    title: `🎵 ${senderName} sent you a mixtape!`,
+    description: `${trackCount} handpicked tracks, made just for you. Tap to listen.`,
     openGraph: {
-      title: `${mixtape.title}`,
-      description: `A mixtape for ${mixtape.recipient_name}`,
+      title: `🎵 ${senderName} sent you a mixtape!`,
+      description: `${trackCount} handpicked tracks, made just for you. Tap to listen.`,
       type: 'website',
+      siteName: 'Mixtape',
       images: mixtape.photo_url ? [{ url: mixtape.photo_url }] : undefined,
     },
     twitter: {
       card: 'summary',
-      title: `${mixtape.title}`,
-      description: `A mixtape for ${mixtape.recipient_name}`,
+      title: `🎵 ${senderName} sent you a mixtape!`,
+      description: `${trackCount} handpicked tracks, made just for you. Tap to listen.`,
     },
   };
 }
@@ -101,6 +104,7 @@ export default async function MixtapePage({ params }: PageProps) {
       mixtape={{
         id: mixtape.id,
         title: mixtape.title,
+        senderName: mixtape.sender_name || 'Someone',
         recipientName: mixtape.recipient_name,
         message: mixtape.message,
         createdAt: mixtape.created_at,

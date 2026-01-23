@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { nanoid } from 'nanoid';
+import { sendMixtapeEmail } from '@/lib/email';
 
 interface TrackInput {
   id: string; // Apple Music track ID
@@ -13,6 +14,7 @@ interface TrackInput {
 
 interface CreateMixtapeRequest {
   title: string;
+  senderName: string;
   recipientName: string;
   recipientEmail?: string;
   recipientPhone?: string;
@@ -30,10 +32,10 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: validationError }, { status: 400 });
     }
 
-    const { title, recipientName, recipientEmail, recipientPhone, message, tracks } = body;
+    const { title, senderName, recipientName, recipientEmail, recipientPhone, message, tracks } = body;
 
     // Generate share token
-    const shareToken = nanoid(12);
+    const shareToken = nanoid(8);
 
     // Create Supabase client with service role key
     const supabase = createClient(
@@ -47,6 +49,7 @@ export async function POST(request: NextRequest) {
       .insert({
         share_token: shareToken,
         title,
+        sender_name: senderName,
         recipient_name: recipientName,
         recipient_email: recipientEmail || null,
         recipient_phone: recipientPhone || null,
@@ -94,6 +97,26 @@ export async function POST(request: NextRequest) {
       event_type: 'mixtape_created',
       metadata: { track_count: tracks.length },
     });
+
+    // Send email to recipient (non-blocking - don't fail if email fails)
+    if (recipientEmail) {
+      const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://mixtape-app-eight.vercel.app';
+      const mixtapeUrl = `${baseUrl}/m/${shareToken}`;
+
+      sendMixtapeEmail({
+        recipientEmail,
+        recipientName,
+        senderName,
+        mixtapeTitle: title,
+        mixtapeUrl,
+        message: message || undefined,
+        trackCount: tracks.length,
+      }).then((result) => {
+        if (!result.success) {
+          console.error('Failed to send mixtape email:', result.error);
+        }
+      });
+    }
 
     return NextResponse.json({
       id: shareToken,
