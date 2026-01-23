@@ -12,6 +12,7 @@ export interface Mixtape {
   user_id: string;
   share_token: string;
   title: string;
+  sender_name: string | null;
   recipient_name: string;
   message: string | null;
   photo_url: string | null;

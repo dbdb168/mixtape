@@ -57,23 +57,23 @@ function MetricCard({
   };
 
   return (
-    <div className="bg-retro-navy p-6 border-4 border-retro-brown">
-      <h3 className="font-pixel text-xs text-retro-cream mb-4">{title}</h3>
-      <p className="font-pixel text-2xl text-retro-orange mb-4">
+    <div className="border border-wire-white p-4">
+      <h3 className="font-pixel text-xs text-wire-gray mb-3">{title}</h3>
+      <p className="font-pixel text-2xl text-wire-white mb-4">
         {formatValue(numValue)}
       </p>
 
       {/* Target progress bar */}
-      <div className="mb-2">
-        <div className="flex justify-between text-xs text-retro-cream mb-1">
+      <div className="mb-3">
+        <div className="flex justify-between text-xs text-wire-gray mb-1">
           <span>Target</span>
           <span>
             {formatValue(numValue)} / {formatValue(target)}
           </span>
         </div>
-        <div className="h-3 bg-retro-black border-2 border-retro-brown">
+        <div className="h-2 border border-wire-dim">
           <div
-            className="h-full bg-retro-teal transition-all duration-500"
+            className="h-full bg-wire-white transition-all duration-500"
             style={{ width: `${targetPercent}%` }}
           />
         </div>
@@ -81,15 +81,15 @@ function MetricCard({
 
       {/* Stretch progress bar */}
       <div>
-        <div className="flex justify-between text-xs text-retro-cream mb-1">
+        <div className="flex justify-between text-xs text-wire-gray mb-1">
           <span>Stretch</span>
           <span>
             {formatValue(numValue)} / {formatValue(stretch)}
           </span>
         </div>
-        <div className="h-3 bg-retro-black border-2 border-retro-brown">
+        <div className="h-2 border border-wire-dim">
           <div
-            className="h-full bg-retro-orange transition-all duration-500"
+            className="h-full bg-wire-gray transition-all duration-500"
             style={{ width: `${stretchPercent}%` }}
           />
         </div>
@@ -124,8 +124,8 @@ export default function AdminDashboard() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-retro-black flex items-center justify-center">
-        <p className="font-pixel text-retro-cream text-sm animate-pulse">
+      <div className="min-h-screen bg-wire-black flex items-center justify-center">
+        <p className="font-pixel text-wire-white text-sm animate-pulse">
           LOADING DASHBOARD...
         </p>
       </div>
@@ -134,16 +134,16 @@ export default function AdminDashboard() {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-retro-black flex items-center justify-center">
-        <p className="font-pixel text-retro-red text-sm">ERROR: {error}</p>
+      <div className="min-h-screen bg-wire-black flex items-center justify-center">
+        <p className="font-pixel text-wire-red text-sm">ERROR: {error}</p>
       </div>
     );
   }
 
   if (!data) {
     return (
-      <div className="min-h-screen bg-retro-black flex items-center justify-center">
-        <p className="font-pixel text-retro-cream text-sm">NO DATA AVAILABLE</p>
+      <div className="min-h-screen bg-wire-black flex items-center justify-center">
+        <p className="font-pixel text-wire-white text-sm">NO DATA AVAILABLE</p>
       </div>
     );
   }
@@ -151,15 +151,17 @@ export default function AdminDashboard() {
   const { metrics, targets, recentErrors } = data;
 
   return (
-    <div className="min-h-screen bg-retro-black p-8">
+    <div className="min-h-screen bg-wire-black p-8">
       <div className="max-w-6xl mx-auto">
         {/* Header */}
-        <h1 className="font-pixel text-2xl text-retro-cream mb-8">
-          ADMIN DASHBOARD
-        </h1>
+        <div className="border border-wire-white p-4 mb-8">
+          <h1 className="font-pixel text-2xl text-wire-white text-center tracking-wider">
+            ADMIN DASHBOARD
+          </h1>
+        </div>
 
         {/* Metrics Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
           <MetricCard
             title="MIXTAPES CREATED"
             value={metrics.mixtapesCreated}
@@ -189,34 +191,34 @@ export default function AdminDashboard() {
         </div>
 
         {/* Total Users */}
-        <div className="bg-retro-navy p-6 border-4 border-retro-brown mb-8">
-          <h3 className="font-pixel text-xs text-retro-cream mb-2">
+        <div className="border border-wire-white p-4 mb-8">
+          <h3 className="font-pixel text-xs text-wire-gray mb-2">
             TOTAL USERS
           </h3>
-          <p className="font-pixel text-3xl text-retro-teal">
+          <p className="font-pixel text-3xl text-wire-white">
             {metrics.totalUsers.toLocaleString()}
           </p>
         </div>
 
         {/* Recent Errors */}
-        <div className="bg-retro-navy p-6 border-4 border-retro-brown">
-          <h3 className="font-pixel text-xs text-retro-cream mb-4">
+        <div className="border border-wire-white p-4">
+          <h3 className="font-pixel text-xs text-wire-gray mb-4 border-b border-wire-dim pb-2">
             RECENT ERRORS
           </h3>
           {recentErrors.length === 0 ? (
-            <p className="text-retro-cream text-sm">No recent errors</p>
+            <p className="text-wire-gray text-sm">No recent errors</p>
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
-                  <tr className="border-b-2 border-retro-brown">
-                    <th className="text-left py-2 px-4 font-pixel text-xs text-retro-cream">
+                  <tr className="border-b border-wire-dim">
+                    <th className="text-left py-2 px-4 font-pixel text-xs text-wire-gray">
                       TIME
                     </th>
-                    <th className="text-left py-2 px-4 font-pixel text-xs text-retro-cream">
+                    <th className="text-left py-2 px-4 font-pixel text-xs text-wire-gray">
                       ERROR
                     </th>
-                    <th className="text-left py-2 px-4 font-pixel text-xs text-retro-cream">
+                    <th className="text-left py-2 px-4 font-pixel text-xs text-wire-gray">
                       DETAILS
                     </th>
                   </tr>
@@ -225,15 +227,15 @@ export default function AdminDashboard() {
                   {recentErrors.map((error) => (
                     <tr
                       key={error.id}
-                      className="border-b border-retro-brown/50"
+                      className="border-b border-wire-dim"
                     >
-                      <td className="py-2 px-4 text-retro-cream">
+                      <td className="py-2 px-4 text-wire-white">
                         {new Date(error.created_at).toLocaleString()}
                       </td>
-                      <td className="py-2 px-4 text-retro-red">
+                      <td className="py-2 px-4 text-wire-red">
                         {(error.metadata?.error as string) || 'Unknown error'}
                       </td>
-                      <td className="py-2 px-4 text-retro-cream/70 max-w-xs truncate">
+                      <td className="py-2 px-4 text-wire-gray max-w-xs truncate">
                         {(error.metadata?.context as string) ||
                           JSON.stringify(error.metadata)}
                       </td>

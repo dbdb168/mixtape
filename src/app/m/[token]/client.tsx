@@ -152,6 +152,11 @@ export function MixtapeViewer({ mixtape, tracks }: MixtapeViewerProps) {
                 &ldquo;{mixtape.message}&rdquo;
               </p>
             )}
+            <p className="text-xl">
+              <Link href="/create" className="text-primary hover:underline">
+                Want to make your own?
+              </Link>
+            </p>
           </div>
 
           {/* Main Content - Cassette on left, Tracklist on right */}
@@ -302,16 +307,6 @@ export function MixtapeViewer({ mixtape, tracks }: MixtapeViewerProps) {
           </div>
         </div>
 
-        {/* CTA - Viral Loop */}
-        <div className="mt-16 text-center space-y-6">
-          <p className="text-xl font-bold">Want to make your own?</p>
-          <Link href="/create" className="btn-primary inline-flex items-center gap-3">
-            <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
-            </svg>
-            CREATE A MIXTAPE
-          </Link>
-        </div>
       </main>
 
       {/* Footer */}

@@ -2,44 +2,224 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ========================================
+   MIXTAPE - Retro Cassette Aesthetic
+   ======================================== */
+
 @layer base {
-  body {
-    @apply bg-noir-bg text-noir-light font-body;
+  html {
+    scroll-behavior: smooth;
   }
 
-  h1, h2, h3 {
-    @apply font-pixel;
+  body {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+}
+
+@layer utilities {
+  /* CRT Scanlines Effect */
+  .crt-scanlines {
+    background: linear-gradient(
+        rgba(18, 16, 16, 0) 50%,
+        rgba(0, 0, 0, 0.25) 50%
+      ),
+      linear-gradient(
+        90deg,
+        rgba(255, 0, 0, 0.06),
+        rgba(0, 255, 0, 0.02),
+        rgba(0, 0, 255, 0.06)
+      );
+    background-size: 100% 4px, 3px 100%;
+    pointer-events: none;
+  }
+
+  /* Retro Glow Text Effect */
+  .retro-glow {
+    text-shadow: 0 0 20px rgba(164, 19, 236, 0.8), 0 0 40px rgba(164, 19, 236, 0.4);
+  }
+
+  /* Neon Border Effect */
+  .neon-border {
+    box-shadow: 0 0 15px rgba(164, 19, 236, 0.4), inset 0 0 5px rgba(164, 19, 236, 0.2);
+  }
+
+  /* Plastic Depth Effect for Buttons */
+  .plastic-depth {
+    box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.1),
+      0 10px 20px rgba(0, 0, 0, 0.5), 0 4px 0 #000;
+  }
+
+  .plastic-depth:active {
+    transform: translateY(2px);
+    box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.1),
+      0 5px 10px rgba(0, 0, 0, 0.5), 0 2px 0 #000;
+  }
+
+  /* Transport Button Style */
+  .plastic-button {
+    box-shadow: 0 6px 0 #000, inset 0 1px 1px rgba(255, 255, 255, 0.1);
+    transition: all 0.1s;
+  }
+
+  .plastic-button:active,
+  .plastic-button.pushed {
+    transform: translateY(4px);
+    box-shadow: 0 2px 0 #000;
+  }
+
+  .plastic-button.pushed {
+    background-color: #1a1a1a;
+    border-color: rgba(164, 19, 236, 0.5);
+  }
+
+  /* Push Latch (Send Button) */
+  .push-latch {
+    box-shadow: 0 6px 0 #000, 0 8px 15px rgba(0, 0, 0, 0.4),
+      inset 0 1px 1px rgba(255, 255, 255, 0.3);
+    transition: all 0.1s;
+  }
+
+  .push-latch:active {
+    transform: translateY(4px);
+    box-shadow: 0 2px 0 #000, 0 4px 10px rgba(0, 0, 0, 0.4),
+      inset 0 1px 1px rgba(255, 255, 255, 0.3);
+  }
+
+  /* LCD Display */
+  .lcd-display {
+    background: #1a0b1f;
+    box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.8);
+  }
+
+  /* Cassette Label Background Pattern */
+  .cassette-label-bg {
+    background-image: radial-gradient(
+      circle at 50% 50%,
+      transparent 20%,
+      rgba(0, 0, 0, 0.05) 21%,
+      rgba(0, 0, 0, 0.05) 25%,
+      transparent 26%
+    );
+    background-size: 10px 10px;
+  }
+
+  /* Liner Notes Paper Effect */
+  .liner-notes {
+    background: repeating-linear-gradient(#f0ede4, #f0ede4 24px, #d1d5db 25px);
+  }
+
+  /* J-Card Simple Style */
+  .j-card-retro {
+    background-color: #000000;
+  }
+
+  /* Jewel Case Glass Effect */
+  .jewel-case {
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5),
+      inset 0 0 20px rgba(255, 255, 255, 0.1),
+      inset 2px 2px 0 rgba(255, 255, 255, 0.2);
+  }
+
+  /* Plastic Reflection */
+  .plastic-reflection {
+    background: linear-gradient(
+      135deg,
+      rgba(255, 255, 255, 0.15) 0%,
+      rgba(255, 255, 255, 0) 50%,
+      rgba(255, 255, 255, 0.05) 100%
+    );
+  }
+
+  /* Tape Spinning Animation */
+  .tape-spinning {
+    animation: spin 4s linear infinite;
+  }
+
+  /* Floating Animation */
+  .floating {
+    animation: float 6s ease-in-out infinite;
   }
 }
 
 @layer components {
-  .btn-retro {
-    @apply font-pixel text-xs px-6 py-3 bg-noir-white text-noir-bg
-           border-2 border-noir-border
-           hover:bg-noir-highlight hover:text-noir-bg
-           active:bg-noir-text
-           transition-all duration-100;
+  /* Primary Button */
+  .btn-primary {
+    @apply relative px-8 py-4 rounded-lg font-bold text-white uppercase tracking-widest;
+    @apply transition-all hover:brightness-110;
+    background-color: #a413ec;
+    box-shadow: 0 6px 0 #000, 0 8px 15px rgba(0, 0, 0, 0.4),
+      inset 0 1px 1px rgba(255, 255, 255, 0.3);
   }
 
-  .btn-secondary {
-    @apply font-pixel text-xs px-6 py-3 bg-transparent text-noir-light
-           border-2 border-noir-border
-           hover:border-noir-muted hover:text-noir-white
-           transition-all duration-100;
+  .btn-primary:active {
+    transform: translateY(4px);
+    box-shadow: 0 2px 0 #000, 0 4px 10px rgba(0, 0, 0, 0.4);
   }
 
-  .card-retro {
-    @apply bg-noir-surface border border-noir-border p-6;
+  /* Ghost Button */
+  .btn-ghost {
+    @apply px-6 py-3 bg-white/5 hover:bg-white/10 rounded-full border border-white/10;
+    @apply font-bold text-xs uppercase tracking-widest transition-colors;
   }
 
-  .input-retro {
-    @apply w-full px-4 py-3 bg-noir-surface border border-noir-border text-noir-light font-body
-           placeholder:text-noir-muted
-           focus:outline-none focus:border-noir-text;
+  /* Form Input */
+  .form-input {
+    @apply w-full bg-white/5 border-2 border-white/10 rounded-xl py-4 px-4;
+    @apply text-sm font-medium focus:ring-0 focus:outline-none;
+    @apply transition-all placeholder:text-white/20;
+  }
+
+  .form-input:focus {
+    border-color: #a413ec;
+  }
+
+  /* Card Style */
+  .card-dark {
+    @apply bg-[#1a1a1f] border border-white/10 rounded-xl;
   }
 }
 
-/* Pixel art cassette tape styles */
-.cassette {
-  image-rendering: pixelated;
+/* Keyframes */
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes float {
+  0% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-20px) rotate(2deg);
+  }
+  100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+}
+
+/* Scrollbar Styling */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(164, 19, 236, 0.3);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(164, 19, 236, 0.5);
 }

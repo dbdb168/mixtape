@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Share Your Mix Tape - Mixtape</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Permanent+Marker&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#a413ec",
+                        "background-light": "#f7f6f8",
+                        "background-dark": "#0a050f",
+                        "chrome": "#2d2d35",
+                        "plastic": "#161118",
+                    },
+                    fontFamily: {
+                        "display": ["Space Grotesk", "sans-serif"],
+                        "handwritten": ["Permanent Marker", "cursive"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style type="text/tailwindcss">
+        :root {
+            --primary-glow: rgba(164, 19, 236, 0.6);
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .jewel-case {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 
+                0 20px 50px rgba(0,0,0,0.5),
+                inset 0 0 20px rgba(255,255,255,0.1),
+                inset 2px 2px 0 rgba(255,255,255,0.2);
+        }
+        .plastic-reflection {
+            background: linear-gradient(135deg, rgba(255,255,255,0.15) 0%, rgba(255,255,255,0) 50%, rgba(255,255,255,0.05) 100%);
+        }
+        .j-card-retro {
+            background-color: #f3f4f6;
+            background-image: 
+                linear-gradient(45deg, #a413ec 25%, transparent 25%), 
+                linear-gradient(-45deg, #a413ec 25%, transparent 25%), 
+                linear-gradient(45deg, transparent 75%, #00f2ff 75%), 
+                linear-gradient(-45deg, transparent 75%, #00f2ff 75%);
+            background-size: 40px 40px;
+            background-position: 0 0, 0 20px, 20px -20px, -20px 0px;
+        }
+        .push-latch {
+            box-shadow: 
+                0 6px 0 #000,
+                0 8px 15px rgba(0,0,0,0.4),
+                inset 0 1px 1px rgba(255,255,255,0.3);
+            transition: all 0.1s;
+        }
+        .push-latch:active {
+            transform: translateY(4px);
+            box-shadow: 
+                0 2px 0 #000,
+                0 4px 10px rgba(0,0,0,0.4),
+                inset 0 1px 1px rgba(255,255,255,0.3);
+        }
+        #sent-message {
+            display: none;
+        }
+        #sent-message:target {
+            display: flex;
+        }
+        .form-input {
+            @apply w-full bg-white/5 border-2 border-white/10 rounded-xl py-4 px-4 text-sm font-medium focus:border-primary focus:ring-0 transition-all placeholder:text-white/20;
+        }
+    </style>
+</head>
+<body class="bg-background-dark font-display text-white selection:bg-primary/40 overflow-x-hidden">
+<div class="fixed inset-0 bg-[radial-gradient(circle_at_50%_50%,_rgba(40,20,50,1)_0%,_rgba(10,5,15,1)_100%)] pointer-events-none"></div>
+<div class="fixed -bottom-40 left-1/2 -translate-x-1/2 w-[120%] h-[300px] bg-primary/10 blur-[120px] rounded-full pointer-events-none"></div>
+<header class="fixed top-0 left-0 w-full z-50 flex items-center justify-between px-12 py-6 bg-black/20 backdrop-blur-md border-b border-white/5">
+<div class="flex items-center gap-4">
+<div class="size-8 bg-primary rounded-lg flex items-center justify-center shadow-[0_0_15px_rgba(164,19,236,0.5)]">
+<span class="material-symbols-outlined text-white text-base">cable</span>
+</div>
+<h2 class="text-xl font-bold tracking-tighter uppercase italic">Mixtape</h2>
+</div>
+<nav class="flex items-center gap-10">
+<a class="text-sm font-medium hover:text-primary transition-colors uppercase tracking-widest" href="#">Dashboard</a>
+<a class="text-sm font-medium hover:text-primary transition-colors uppercase tracking-widest" href="#">Collection</a>
+<a class="text-sm font-medium hover:text-primary transition-colors uppercase tracking-widest" href="#">Network</a>
+</nav>
+<div class="flex gap-4">
+<button class="size-10 rounded-full bg-white/5 flex items-center justify-center border border-white/10 hover:bg-white/10">
+<span class="material-symbols-outlined text-sm text-white/70">notifications</span>
+</button>
+<div class="size-10 rounded-full overflow-hidden border-2 border-primary">
+<img alt="User profile" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC10hAKv9QAh25oLMXgyitIJexitIbGjU70vo9pBss2RH8yctOaYVhH7JrVSEYf4oijGoADveUzZKBU1u5UOQOQeW-hq_zR3LU0hKxe3SYZoPlChSwA_25z6l6RN0R4meQjGBs3qYqLMSwpF7Q_Y5X_m3K6xQxpfxFZBSCIy31HsPTA2O8TrZwQ1PUwXVGy0ikv44rbukZVEEYf1WTCStGtSMMtHPBGQrETUSHvn5HjQTbzimpd7M1BuGBm6QRTNR6KM_msGcViEvIG"/>
+</div>
+</div>
+</header>
+<main class="relative z-10 min-h-screen flex items-center justify-center pt-24 pb-12 px-8">
+<div class="w-full max-w-6xl grid grid-cols-1 lg:grid-cols-2 gap-16 items-start">
+<div class="flex flex-col justify-center items-center gap-8 sticky top-32">
+<div class="relative w-[480px] h-[340px] jewel-case rounded-xl rotate-1 group hover:rotate-0 transition-transform duration-700 ease-out">
+<div class="absolute inset-0 plastic-reflection rounded-xl z-30 pointer-events-none opacity-60"></div>
+<div class="absolute -left-1 top-8 w-2 h-12 bg-white/10 rounded-l border border-white/10"></div>
+<div class="absolute -left-1 bottom-8 w-2 h-12 bg-white/10 rounded-l border border-white/10"></div>
+<div class="absolute inset-4 rounded-lg overflow-hidden shadow-inner flex bg-zinc-900 border border-black/50">
+<div class="w-12 h-full bg-primary/80 border-r border-black/20 flex flex-col items-center justify-center gap-8 py-4">
+<span class="text-[10px] font-bold rotate-90 whitespace-nowrap tracking-widest text-white/50 uppercase">Your Mix Tape</span>
+<span class="text-xs font-bold text-white uppercase">A</span>
+</div>
+<div class="flex-1 relative j-card-retro p-6 flex flex-col justify-between overflow-hidden">
+<div class="relative z-10">
+<h1 class="text-4xl font-black text-black leading-none mb-1">MIX</h1>
+<h2 class="text-2xl font-bold text-primary italic leading-none uppercase">Tape Vol. 1</h2>
+</div>
+<div class="absolute bottom-6 left-6 right-6 h-36 bg-black/90 rounded-lg border-2 border-black p-2 shadow-2xl overflow-hidden flex flex-col">
+<div class="h-10 bg-primary/80 rounded-sm mb-2 p-1">
+<div class="bg-white/90 h-full flex items-center px-2">
+<span class="font-handwritten text-black text-[10px]">HANDMADE FOR YOU</span>
+</div>
+</div>
+<div class="flex-1 flex items-center justify-around px-4">
+<div class="size-12 rounded-full bg-black border-2 border-white/10 flex items-center justify-center relative overflow-hidden">
+<div class="size-4 rounded-full bg-zinc-900 border border-white/10 z-10"></div>
+</div>
+<div class="w-8 h-4 bg-black border border-white/10 rounded flex items-center justify-center">
+<span class="text-[6px] text-primary/50 font-bold uppercase">Chrome</span>
+</div>
+<div class="size-12 rounded-full bg-black border-2 border-white/10 flex items-center justify-center relative overflow-hidden">
+<div class="size-4 rounded-full bg-zinc-900 border border-white/10 z-10"></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<button class="flex items-center gap-3 px-6 py-3 bg-white/5 hover:bg-white/10 rounded-full border border-white/10 transition-colors group">
+<span class="material-symbols-outlined text-green-400">chat</span>
+<span class="text-xs font-bold uppercase tracking-widest">Share via SMS / WhatsApp</span>
+</button>
+</div>
+<div class="space-y-8">
+<div class="space-y-2">
+<h2 class="text-5xl font-bold tracking-tighter">Share Your Mix Tape</h2>
+<p class="text-white/40 text-sm font-medium">Ready to deliver these tracks? Fill out the details below.</p>
+</div>
+<form action="#sent-message" class="space-y-6" id="share-form">
+<div class="grid grid-cols-2 gap-4">
+<div class="space-y-2">
+<label class="text-[10px] font-bold text-white/40 uppercase tracking-[0.2em]">First Name</label>
+<input class="form-input" placeholder="John" required="" type="text"/>
+</div>
+<div class="space-y-2">
+<label class="text-[10px] font-bold text-white/40 uppercase tracking-[0.2em]">Last Name</label>
+<input class="form-input" placeholder="Doe" required="" type="text"/>
+</div>
+</div>
+<div class="space-y-2">
+<label class="text-[10px] font-bold text-white/40 uppercase tracking-[0.2em]">Recipient's Email</label>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-primary/60">mail</span>
+<input class="form-input pl-12" placeholder="friend@example.com" required="" type="email"/>
+</div>
+</div>
+<div class="space-y-2">
+<label class="text-[10px] font-bold text-white/40 uppercase tracking-[0.2em]">Liner Notes / Message</label>
+<textarea class="form-input resize-none" placeholder="Write a personal note for your mixtape..." rows="4"></textarea>
+</div>
+<div class="pt-4 flex flex-col gap-8">
+<button class="push-latch group relative bg-[#a413ec] w-full h-16 rounded-lg flex items-center justify-center gap-3 overflow-hidden" type="submit">
+<div class="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
+<span class="material-symbols-outlined text-white text-2xl group-active:scale-90 transition-transform">send</span>
+<span class="text-sm font-black tracking-widest uppercase text-white shadow-sm">SEND TAPE</span>
+<div class="absolute top-2 right-2 size-2 rounded-full bg-white/40 group-hover:bg-white shadow-[0_0_8px_rgba(255,255,255,0.5)]"></div>
+</button>
+<div class="bg-green-500/10 border border-green-500/50 p-4 rounded-xl items-center gap-4 animate-in fade-in slide-in-from-top-2 duration-500" id="sent-message">
+<span class="material-symbols-outlined text-green-500">check_circle</span>
+<span class="text-sm font-bold text-green-400">Sent! Your mixtape is on its way.</span>
+</div>
+<div class="bg-white/5 border border-white/10 rounded-xl p-6 space-y-3">
+<div class="flex items-center gap-3">
+<div class="size-8 bg-[#ff4b00] rounded flex items-center justify-center">
+<span class="text-white font-black text-xs">S</span>
+</div>
+<h4 class="text-sm font-bold">The AI Cookbook</h4>
+</div>
+<p class="text-sm text-white/60 leading-relaxed">
+                                If you enjoyed this, you might enjoy some things I'm writing about on Substack at the AI Cookbook. 
+                                <a class="text-primary hover:underline font-bold" href="#">Subscribe here.</a>
+</p>
+</div>
+</div>
+</form>
+</div>
+</div>
+</main>
+<footer class="fixed bottom-0 left-0 w-full p-8 flex justify-between items-end pointer-events-none">
+<div class="flex flex-col gap-1 text-white/20 select-none">
+<span class="text-4xl font-display font-black leading-none opacity-10 uppercase">M x t p</span>
+<span class="text-[8px] tracking-[0.8em] uppercase">Distribution Terminal v3.0</span>
+</div>
+<div class="flex items-center gap-2 px-4 py-2 bg-black/40 backdrop-blur rounded-full border border-white/5">
+<div class="size-1.5 rounded-full bg-green-500 animate-pulse shadow-[0_0_5px_#22c55e]"></div>
+<span class="text-[10px] font-bold text-white/40 tracking-widest uppercase">Secure Dispatch</span>
+</div>
+</footer>
+
+</body></html>

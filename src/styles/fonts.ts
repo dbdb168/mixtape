@@ -1,12 +1,27 @@
-import { Press_Start_2P, Inter } from 'next/font/google';
+import { Space_Grotesk, Permanent_Marker } from 'next/font/google';
 
-export const pixelFont = Press_Start_2P({
+// Main display font - Space Grotesk
+export const displayFont = Space_Grotesk({
+  subsets: ['latin'],
+  variable: '--font-display',
+  weight: ['300', '400', '500', '600', '700'],
+});
+
+// Handwritten font for liner notes
+export const handwrittenFont = Permanent_Marker({
+  weight: '400',
+  subsets: ['latin'],
+  variable: '--font-handwritten',
+});
+
+// VT323 pixel font - using next/font/google
+import { VT323 } from 'next/font/google';
+
+export const pixelFont = VT323({
   weight: '400',
   subsets: ['latin'],
   variable: '--font-pixel',
 });
 
-export const bodyFont = Inter({
-  subsets: ['latin'],
-  variable: '--font-body',
-});
+// Export legacy names for compatibility
+export const bodyFont = displayFont;

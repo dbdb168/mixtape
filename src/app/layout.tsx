@@ -1,7 +1,6 @@
 import type { Metadata } from 'next';
-import { pixelFont, bodyFont } from '@/styles/fonts';
+import { displayFont, pixelFont, handwrittenFont } from '@/styles/fonts';
 import { Toaster } from 'react-hot-toast';
-import { Footer } from '@/components/Footer';
 import './globals.css';
 
 export const metadata: Metadata = {
@@ -20,20 +19,18 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${pixelFont.variable} ${bodyFont.variable}`}>
-      <body className="flex flex-col min-h-screen">
-        <div className="flex-1">
-          {children}
-        </div>
-        <Footer />
+    <html lang="en" className={`dark ${displayFont.variable} ${pixelFont.variable} ${handwrittenFont.variable}`}>
+      <body className="bg-background-dark font-display text-white selection:bg-primary/40 overflow-x-hidden">
+        {children}
         <Toaster
           position="bottom-center"
           toastOptions={{
-            className: 'font-pixel text-xs',
+            className: 'font-display text-sm',
             style: {
-              background: '#141414',
-              color: '#E5E5E5',
-              border: '1px solid #2A2A2A',
+              background: '#1a1a1f',
+              color: '#FFFFFF',
+              border: '1px solid rgba(164, 19, 236, 0.5)',
+              borderRadius: '0.5rem',
             },
           }}
         />

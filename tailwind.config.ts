@@ -6,46 +6,44 @@ const config: Config = {
     './src/components/**/*.{js,ts,jsx,tsx,mdx}',
     './src/app/**/*.{js,ts,jsx,tsx,mdx}',
   ],
+  darkMode: 'class',
   theme: {
     extend: {
       fontFamily: {
+        display: ['var(--font-display)', 'sans-serif'],
         pixel: ['var(--font-pixel)', 'monospace'],
-        body: ['var(--font-body)', 'sans-serif'],
+        handwritten: ['var(--font-handwritten)', 'cursive'],
       },
       colors: {
-        // Noir palette - dark monochrome aesthetic
-        noir: {
-          bg: '#0A0A0A',         // Deep black background
-          surface: '#141414',    // Card/elevated surfaces
-          border: '#2A2A2A',     // Subtle borders
-          muted: '#525252',      // Muted text
-          text: '#A3A3A3',       // Secondary text
-          light: '#E5E5E5',      // Primary text
-          white: '#FAFAFA',      // Brightest text
-          accent: '#F5F5F5',     // Accent (soft white)
-          highlight: '#D4D4D4',  // Hover states
-        },
-        // Legacy retro colors (mapped to noir)
-        retro: {
-          cream: '#0A0A0A',      // Now dark
-          brown: '#525252',      // Now muted gray
-          orange: '#E5E5E5',     // Now light (for CTAs)
-          red: '#B91C1C',        // Error red
-          teal: '#A3A3A3',       // Now secondary gray
-          navy: '#D4D4D4',       // Now light gray
-          black: '#FAFAFA',      // Now white (inverted)
-        },
+        primary: '#a413ec',
+        'background-dark': '#0a050f',
+        'background-light': '#f7f6f8',
+        metal: '#2d2d35',
+        chrome: '#2d2d35',
+        plastic: '#161118',
+        'record-red': '#ff0000',
       },
       animation: {
-        'bounce-slow': 'bounce 2s infinite',
-        'pulse-slow': 'pulse 3s infinite',
-        'wiggle': 'wiggle 0.5s ease-in-out infinite',
+        'spin-slow': 'spin 8s linear infinite',
+        'spin-tape': 'spin 4s linear infinite',
+        'float': 'float 6s ease-in-out infinite',
+        'bounce-slow': 'bounce 4s infinite',
+        'pulse-glow': 'pulse 2s ease-in-out infinite',
       },
       keyframes: {
-        wiggle: {
-          '0%, 100%': { transform: 'rotate(-3deg)' },
-          '50%': { transform: 'rotate(3deg)' },
+        float: {
+          '0%': { transform: 'translateY(0px) rotate(0deg)' },
+          '50%': { transform: 'translateY(-20px) rotate(2deg)' },
+          '100%': { transform: 'translateY(0px) rotate(0deg)' },
         },
+      },
+      boxShadow: {
+        'glow-primary': '0 0 20px rgba(164, 19, 236, 0.6)',
+        'glow-primary-lg': '0 0 40px rgba(164, 19, 236, 0.4)',
+        'plastic': '0 6px 0 #000, inset 0 1px 1px rgba(255,255,255,0.1)',
+        'plastic-pressed': '0 2px 0 #000',
+        'cassette': '0 50px 100px -20px rgba(0,0,0,0.9), inset 0 2px 10px rgba(255,255,255,0.1)',
+        'jewel-case': '0 20px 50px rgba(0,0,0,0.5), inset 0 0 20px rgba(255,255,255,0.1), inset 2px 2px 0 rgba(255,255,255,0.2)',
       },
     },
   },
