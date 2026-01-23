@@ -6,7 +6,7 @@ import './globals.css';
 
 export const metadata: Metadata = {
   title: 'Mixtape - Make a mixtape for someone you care about',
-  description: 'Create personalised music compilations and share them with friends. Connect Spotify, pick songs, add a message, and send the love.',
+  description: 'Create personalised music compilations and share them with friends. Pick songs, add a message, and send the love. Powered by Apple Music.',
   openGraph: {
     title: 'Mixtape',
     description: 'Make a mixtape for someone you care about',
@@ -31,9 +31,9 @@ export default function RootLayout({
           toastOptions={{
             className: 'font-pixel text-xs',
             style: {
-              background: '#1A1A2E',
-              color: '#F5E6D3',
-              border: '4px solid #8B4513',
+              background: '#141414',
+              color: '#E5E5E5',
+              border: '1px solid #2A2A2A',
             },
           }}
         />

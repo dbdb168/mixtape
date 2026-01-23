@@ -1,14 +1,13 @@
 'use client';
 
 import { useState } from 'react';
-import { PhotoUpload } from '@/components/PhotoUpload';
 
 interface MixtapeFormData {
   title: string;
   recipientName: string;
+  recipientEmail: string;
+  recipientPhone: string;
   message: string;
-  saveAsPlaylist: boolean;
-  photoUrl: string | null;
 }
 
 interface MixtapeFormProps {
@@ -20,15 +19,17 @@ interface MixtapeFormProps {
 export function MixtapeForm({ onSubmit, isSubmitting, initialData }: MixtapeFormProps) {
   const [title, setTitle] = useState(initialData?.title || '');
   const [recipientName, setRecipientName] = useState(initialData?.recipientName || '');
+  const [recipientEmail, setRecipientEmail] = useState(initialData?.recipientEmail || '');
+  const [recipientPhone, setRecipientPhone] = useState(initialData?.recipientPhone || '');
   const [message, setMessage] = useState(initialData?.message || '');
-  const [saveAsPlaylist, setSaveAsPlaylist] = useState(initialData?.saveAsPlaylist || false);
-  const [photoUrl, setPhotoUrl] = useState<string | null>(initialData?.photoUrl || null);
 
   const TITLE_MAX = 50;
   const RECIPIENT_MAX = 50;
   const MESSAGE_MAX = 200;
 
-  const isValid = title.trim().length > 0 && recipientName.trim().length > 0;
+  // Require at least email or phone for contact capture
+  const hasContact = recipientEmail.trim().length > 0 || recipientPhone.trim().length > 0;
+  const isValid = title.trim().length > 0 && recipientName.trim().length > 0 && hasContact;
   const canSubmit = isValid && !isSubmitting;
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -38,9 +39,9 @@ export function MixtapeForm({ onSubmit, isSubmitting, initialData }: MixtapeForm
     onSubmit({
       title: title.trim(),
       recipientName: recipientName.trim(),
+      recipientEmail: recipientEmail.trim(),
+      recipientPhone: recipientPhone.trim(),
       message: message.trim(),
-      saveAsPlaylist,
-      photoUrl,
     });
   };
 
@@ -48,7 +49,7 @@ export function MixtapeForm({ onSubmit, isSubmitting, initialData }: MixtapeForm
     <form onSubmit={handleSubmit} className="space-y-6">
       {/* Title */}
       <div className="space-y-2">
-        <label htmlFor="title" className="font-pixel text-xs text-retro-brown block">
+        <label htmlFor="title" className="font-pixel text-xs text-noir-muted block">
           MIXTAPE TITLE *
         </label>
         <input
@@ -62,7 +63,7 @@ export function MixtapeForm({ onSubmit, isSubmitting, initialData }: MixtapeForm
           required
         />
         <div className="text-right">
-          <span className={`font-pixel text-[10px] ${title.length >= TITLE_MAX ? 'text-retro-red' : 'text-retro-brown'}`}>
+          <span className={`font-pixel text-[10px] ${title.length >= TITLE_MAX ? 'text-retro-red' : 'text-noir-muted'}`}>
             {title.length}/{TITLE_MAX}
           </span>
         </div>
@@ -70,7 +71,7 @@ export function MixtapeForm({ onSubmit, isSubmitting, initialData }: MixtapeForm
 
       {/* Recipient Name */}
       <div className="space-y-2">
-        <label htmlFor="recipientName" className="font-pixel text-xs text-retro-brown block">
+        <label htmlFor="recipientName" className="font-pixel text-xs text-noir-muted block">
           WHO IS THIS FOR? *
         </label>
         <input
@@ -84,15 +85,61 @@ export function MixtapeForm({ onSubmit, isSubmitting, initialData }: MixtapeForm
           required
         />
         <div className="text-right">
-          <span className={`font-pixel text-[10px] ${recipientName.length >= RECIPIENT_MAX ? 'text-retro-red' : 'text-retro-brown'}`}>
+          <span className={`font-pixel text-[10px] ${recipientName.length >= RECIPIENT_MAX ? 'text-retro-red' : 'text-noir-muted'}`}>
             {recipientName.length}/{RECIPIENT_MAX}
           </span>
         </div>
       </div>
 
+      {/* Recipient Contact - Email or Phone required */}
+      <div className="space-y-4">
+        <p className="font-pixel text-xs text-noir-muted">
+          HOW SHOULD WE REACH THEM? *
+        </p>
+        <p className="text-xs text-noir-text">
+          Enter their email or phone so you can share directly
+        </p>
+
+        {/* Email */}
+        <div className="space-y-1">
+          <label htmlFor="recipientEmail" className="font-pixel text-[10px] text-noir-muted block">
+            EMAIL
+          </label>
+          <input
+            id="recipientEmail"
+            type="email"
+            value={recipientEmail}
+            onChange={(e) => setRecipientEmail(e.target.value)}
+            placeholder="friend@email.com"
+            className="input-retro"
+          />
+        </div>
+
+        {/* Phone */}
+        <div className="space-y-1">
+          <label htmlFor="recipientPhone" className="font-pixel text-[10px] text-noir-muted block">
+            PHONE
+          </label>
+          <input
+            id="recipientPhone"
+            type="tel"
+            value={recipientPhone}
+            onChange={(e) => setRecipientPhone(e.target.value)}
+            placeholder="+1 555 123 4567"
+            className="input-retro"
+          />
+        </div>
+
+        {!hasContact && (
+          <p className="font-pixel text-[10px] text-retro-red">
+            Please enter an email or phone number
+          </p>
+        )}
+      </div>
+
       {/* Message */}
       <div className="space-y-2">
-        <label htmlFor="message" className="font-pixel text-xs text-retro-brown block">
+        <label htmlFor="message" className="font-pixel text-xs text-noir-muted block">
           ADD A MESSAGE
         </label>
         <textarea
@@ -104,30 +151,10 @@ export function MixtapeForm({ onSubmit, isSubmitting, initialData }: MixtapeForm
           maxLength={MESSAGE_MAX}
         />
         <div className="text-right">
-          <span className={`font-pixel text-[10px] ${message.length >= MESSAGE_MAX ? 'text-retro-red' : 'text-retro-brown'}`}>
+          <span className={`font-pixel text-[10px] ${message.length >= MESSAGE_MAX ? 'text-retro-red' : 'text-noir-muted'}`}>
             {message.length}/{MESSAGE_MAX}
           </span>
         </div>
-      </div>
-
-      {/* Photo Upload */}
-      <PhotoUpload
-        onUploadComplete={setPhotoUrl}
-        currentPhotoUrl={photoUrl || undefined}
-      />
-
-      {/* Save as Playlist Checkbox */}
-      <div className="flex items-center gap-3">
-        <input
-          id="saveAsPlaylist"
-          type="checkbox"
-          checked={saveAsPlaylist}
-          onChange={(e) => setSaveAsPlaylist(e.target.checked)}
-          className="w-5 h-5 border-4 border-retro-black accent-retro-teal cursor-pointer"
-        />
-        <label htmlFor="saveAsPlaylist" className="font-pixel text-xs text-retro-brown cursor-pointer">
-          ALSO SAVE AS A SPOTIFY PLAYLIST
-        </label>
       </div>
 
       {/* Submit Button */}

@@ -10,7 +10,6 @@ interface Track {
   albumArt: string;
   duration: number;
   previewUrl: string | null;
-  uri: string;
 }
 
 interface TrackListProps {
@@ -52,10 +51,10 @@ export function TrackList({ tracks, onRemoveTrack, onReorderTracks }: TrackListP
   if (tracks.length === 0) {
     return (
       <div className="text-center py-8">
-        <p className="font-pixel text-xs text-retro-brown">
+        <p className="font-pixel text-xs text-noir-muted">
           NO TRACKS YET
         </p>
-        <p className="text-sm text-retro-navy mt-2">
+        <p className="text-sm text-noir-text mt-2">
           Search and add songs to your mixtape
         </p>
       </div>
@@ -71,12 +70,12 @@ export function TrackList({ tracks, onRemoveTrack, onReorderTracks }: TrackListP
           onDragStart={() => handleDragStart(index)}
           onDragOver={(e) => handleDragOver(e, index)}
           onDragEnd={handleDragEnd}
-          className={`flex items-center gap-3 p-3 border-2 border-retro-black bg-white cursor-move ${
+          className={`flex items-center gap-3 p-3 border border-noir-border bg-noir-bg cursor-move ${
             draggedIndex === index ? 'opacity-50' : ''
           }`}
         >
           {/* Position number */}
-          <span className="font-pixel text-xs text-retro-brown w-6">
+          <span className="font-pixel text-xs text-noir-muted w-6">
             {(index + 1).toString().padStart(2, '0')}
           </span>
 
@@ -85,25 +84,25 @@ export function TrackList({ tracks, onRemoveTrack, onReorderTracks }: TrackListP
             <img
               src={track.albumArt}
               alt={track.album}
-              className="w-10 h-10 border-2 border-retro-black"
+              className="w-10 h-10 border border-noir-border"
             />
           )}
 
           {/* Track info */}
           <div className="flex-1 min-w-0">
-            <p className="font-bold text-sm truncate">{track.name}</p>
-            <p className="text-xs text-retro-brown truncate">{track.artist}</p>
+            <p className="font-bold text-sm text-noir-light truncate">{track.name}</p>
+            <p className="text-xs text-noir-muted truncate">{track.artist}</p>
           </div>
 
           {/* Duration */}
-          <span className="font-pixel text-[10px] text-retro-brown">
+          <span className="font-pixel text-[10px] text-noir-muted">
             {formatDuration(track.duration)}
           </span>
 
           {/* Remove button */}
           <button
             onClick={() => onRemoveTrack(track.id)}
-            className="p-2 hover:bg-retro-red hover:text-white rounded font-pixel text-xs"
+            className="p-2 hover:bg-retro-red hover:text-white rounded font-pixel text-xs text-noir-muted"
             title="Remove"
           >
             ✕

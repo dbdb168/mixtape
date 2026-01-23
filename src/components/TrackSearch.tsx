@@ -12,7 +12,6 @@ interface Track {
   albumArt: string;
   duration: number;
   previewUrl: string | null;
-  uri: string;
 }
 
 interface TrackSearchProps {
@@ -90,7 +89,7 @@ export function TrackSearch({ onAddTrack, disabledTrackIds }: TrackSearchProps) 
       />
 
       {isLoading && (
-        <p className="font-pixel text-xs text-retro-brown text-center">
+        <p className="font-pixel text-xs text-noir-muted text-center">
           SEARCHING...
         </p>
       )}
@@ -102,8 +101,8 @@ export function TrackSearch({ onAddTrack, disabledTrackIds }: TrackSearchProps) 
           return (
             <div
               key={track.id}
-              className={`flex items-center gap-3 p-3 border-2 border-retro-black ${
-                isDisabled ? 'opacity-50' : 'hover:bg-retro-cream cursor-pointer'
+              className={`flex items-center gap-3 p-3 border border-noir-border ${
+                isDisabled ? 'opacity-50' : 'hover:bg-noir-border cursor-pointer'
               }`}
               onClick={() => !isDisabled && onAddTrack(track)}
             >
@@ -112,18 +111,18 @@ export function TrackSearch({ onAddTrack, disabledTrackIds }: TrackSearchProps) 
                 <img
                   src={track.albumArt}
                   alt={track.album}
-                  className="w-12 h-12 border-2 border-retro-black"
+                  className="w-12 h-12 border border-noir-border"
                 />
               )}
 
               {/* Track info */}
               <div className="flex-1 min-w-0">
-                <p className="font-bold text-sm truncate">{track.name}</p>
-                <p className="text-xs text-retro-brown truncate">{track.artist}</p>
+                <p className="font-bold text-sm text-noir-light truncate">{track.name}</p>
+                <p className="text-xs text-noir-muted truncate">{track.artist}</p>
               </div>
 
               {/* Duration */}
-              <span className="font-pixel text-[10px] text-retro-brown">
+              <span className="font-pixel text-[10px] text-noir-muted">
                 {formatDuration(track.duration)}
               </span>
 
@@ -134,7 +133,7 @@ export function TrackSearch({ onAddTrack, disabledTrackIds }: TrackSearchProps) 
                     e.stopPropagation();
                     playPreview(track.previewUrl!, track.id);
                   }}
-                  className="p-2 hover:bg-retro-orange hover:text-white rounded"
+                  className="p-2 hover:bg-noir-border text-noir-text hover:text-noir-white rounded"
                   title="Preview"
                 >
                   {playingPreview === track.id ? '⏸' : '▶'}
@@ -143,9 +142,9 @@ export function TrackSearch({ onAddTrack, disabledTrackIds }: TrackSearchProps) 
 
               {/* Add indicator */}
               {isDisabled ? (
-                <span className="font-pixel text-[10px] text-retro-teal">ADDED</span>
+                <span className="font-pixel text-[10px] text-noir-muted">ADDED</span>
               ) : (
-                <span className="font-pixel text-[10px] text-retro-orange">+ ADD</span>
+                <span className="font-pixel text-[10px] text-noir-white">+ ADD</span>
               )}
             </div>
           );

@@ -4,7 +4,7 @@
 
 @layer base {
   body {
-    @apply bg-retro-cream text-retro-black font-body;
+    @apply bg-noir-bg text-noir-light font-body;
   }
 
   h1, h2, h3 {
@@ -14,20 +14,28 @@
 
 @layer components {
   .btn-retro {
-    @apply font-pixel text-xs px-6 py-3 bg-retro-orange text-white
-           border-4 border-retro-brown shadow-[4px_4px_0_0_#8B4513]
-           hover:shadow-[2px_2px_0_0_#8B4513] hover:translate-x-[2px] hover:translate-y-[2px]
-           active:shadow-none active:translate-x-[4px] active:translate-y-[4px]
+    @apply font-pixel text-xs px-6 py-3 bg-noir-white text-noir-bg
+           border-2 border-noir-border
+           hover:bg-noir-highlight hover:text-noir-bg
+           active:bg-noir-text
+           transition-all duration-100;
+  }
+
+  .btn-secondary {
+    @apply font-pixel text-xs px-6 py-3 bg-transparent text-noir-light
+           border-2 border-noir-border
+           hover:border-noir-muted hover:text-noir-white
            transition-all duration-100;
   }
 
   .card-retro {
-    @apply bg-white border-4 border-retro-black shadow-[8px_8px_0_0_#1A1A2E] p-6;
+    @apply bg-noir-surface border border-noir-border p-6;
   }
 
   .input-retro {
-    @apply w-full px-4 py-3 border-4 border-retro-black font-body
-           focus:outline-none focus:border-retro-teal;
+    @apply w-full px-4 py-3 bg-noir-surface border border-noir-border text-noir-light font-body
+           placeholder:text-noir-muted
+           focus:outline-none focus:border-noir-text;
   }
 }
 

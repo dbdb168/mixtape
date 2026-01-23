@@ -1,6 +1,6 @@
 export interface User {
   id: string;
-  spotify_id: string;
+  apple_music_id: string; // Legacy: was spotify_id in database
   email: string | null;
   display_name: string | null;
   newsletter_opt_in: boolean;
@@ -22,7 +22,7 @@ export interface Mixtape {
 export interface Track {
   id: string;
   mixtape_id: string;
-  spotify_track_id: string;
+  spotify_track_id: string; // Legacy field name - stores Apple Music track ID
   position: number;
   track_name: string;
   artist_name: string;
@@ -41,7 +41,7 @@ export interface AnalyticsEvent {
 
 export type EventType =
   | 'page_view'
-  | 'spotify_connected'
+  | 'apple_music_connected'
   | 'track_added'
   | 'track_removed'
   | 'mixtape_created'

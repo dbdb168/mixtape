@@ -2,14 +2,13 @@ import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { createClient } from '@supabase/supabase-js';
 import { MixtapeViewer } from './client';
-import type { Mixtape, Track, User } from '@/lib/supabase/types';
+import type { Mixtape, Track } from '@/lib/supabase/types';
 
 interface PageProps {
   params: Promise<{ token: string }>;
 }
 
 interface MixtapeWithDetails extends Mixtape {
-  user: Pick<User, 'display_name' | 'id'> | null;
   tracks: Track[];
 }
 
@@ -19,18 +18,18 @@ async function getMixtape(token: string): Promise<MixtapeWithDetails | null> {
     process.env.SUPABASE_SERVICE_ROLE_KEY!
   );
 
-  // Fetch mixtape with user and tracks
+  // Fetch mixtape with tracks (no user join for anonymous mixtapes)
   const { data: mixtape, error } = await supabase
     .from('mixtapes')
     .select(`
       *,
-      user:users!user_id (id, display_name),
       tracks (*)
     `)
     .eq('share_token', token)
     .single();
 
   if (error || !mixtape) {
+    console.error('Mixtape fetch error:', error);
     return null;
   }
 
@@ -67,22 +66,21 @@ export async function generateMetadata({
     };
   }
 
-  const senderName = mixtape.user?.display_name || 'Someone';
   const trackCount = mixtape.tracks?.length || 0;
 
   return {
     title: `${mixtape.title} - A Mixtape for ${mixtape.recipient_name}`,
-    description: `${senderName} made a mixtape with ${trackCount} tracks for ${mixtape.recipient_name}. Listen now!`,
+    description: `A mixtape with ${trackCount} tracks for ${mixtape.recipient_name}. Listen now!`,
     openGraph: {
       title: `${mixtape.title}`,
-      description: `A mixtape for ${mixtape.recipient_name} from ${senderName}`,
+      description: `A mixtape for ${mixtape.recipient_name}`,
       type: 'website',
       images: mixtape.photo_url ? [{ url: mixtape.photo_url }] : undefined,
     },
     twitter: {
       card: 'summary',
       title: `${mixtape.title}`,
-      description: `A mixtape for ${mixtape.recipient_name} from ${senderName}`,
+      description: `A mixtape for ${mixtape.recipient_name}`,
     },
   };
 }
@@ -105,13 +103,11 @@ export default async function MixtapePage({ params }: PageProps) {
         title: mixtape.title,
         recipientName: mixtape.recipient_name,
         message: mixtape.message,
-        photoUrl: mixtape.photo_url,
-        senderName: mixtape.user?.display_name || null,
         createdAt: mixtape.created_at,
       }}
       tracks={mixtape.tracks.map((track) => ({
         id: track.id,
-        spotifyTrackId: track.spotify_track_id,
+        trackId: track.spotify_track_id, // Legacy field name, stores Apple Music ID
         name: track.track_name,
         artist: track.artist_name,
         albumArt: track.album_art_url,

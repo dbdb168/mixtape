@@ -15,15 +15,14 @@ interface Track {
   albumArt: string;
   duration: number;
   previewUrl: string | null;
-  uri: string;
 }
 
 interface MixtapeFormData {
   title: string;
   recipientName: string;
+  recipientEmail: string;
+  recipientPhone: string;
   message: string;
-  saveAsPlaylist: boolean;
-  photoUrl: string | null;
 }
 
 type Step = 'tracks' | 'personalize' | 'share';
@@ -72,9 +71,9 @@ export function CreateMixtapeClient() {
         body: JSON.stringify({
           title: data.title,
           recipientName: data.recipientName,
+          recipientEmail: data.recipientEmail,
+          recipientPhone: data.recipientPhone,
           message: data.message,
-          saveAsPlaylist: data.saveAsPlaylist,
-          photoUrl: data.photoUrl,
           tracks: tracks.map((t) => ({
             id: t.id,
             name: t.name,
@@ -82,7 +81,6 @@ export function CreateMixtapeClient() {
             album: t.album,
             albumArt: t.albumArt,
             duration: t.duration,
-            uri: t.uri,
           })),
         }),
       });
@@ -116,27 +114,30 @@ export function CreateMixtapeClient() {
 
   const shareViaEmail = () => {
     if (!shareUrl || !formData) return;
+    const to = formData.recipientEmail ? encodeURIComponent(formData.recipientEmail) : '';
     const subject = encodeURIComponent(`${formData.title} - A mixtape for you!`);
     const body = encodeURIComponent(
       `Hey ${formData.recipientName}!\n\n${formData.message ? formData.message + '\n\n' : ''}I made you a mixtape: ${shareUrl}`
     );
-    window.open(`mailto:?subject=${subject}&body=${body}`, '_blank');
+    window.open(`mailto:${to}?subject=${subject}&body=${body}`, '_blank');
   };
 
   const shareViaSMS = () => {
     if (!shareUrl || !formData) return;
+    const to = formData.recipientPhone || '';
     const body = encodeURIComponent(
       `Hey ${formData.recipientName}! I made you a mixtape: ${shareUrl}`
     );
-    window.open(`sms:?body=${body}`, '_blank');
+    window.open(`sms:${to}?body=${body}`, '_blank');
   };
 
   const shareViaWhatsApp = () => {
     if (!shareUrl || !formData) return;
+    const phone = formData.recipientPhone ? formData.recipientPhone.replace(/\D/g, '') : '';
     const text = encodeURIComponent(
       `Hey ${formData.recipientName}! I made you a mixtape: ${shareUrl}`
     );
-    window.open(`https://wa.me/?text=${text}`, '_blank');
+    window.open(`https://wa.me/${phone}?text=${text}`, '_blank');
   };
 
   const copyLink = async () => {
@@ -152,11 +153,11 @@ export function CreateMixtapeClient() {
   const currentStepIndex = STEPS.findIndex((s) => s.key === step);
 
   return (
-    <main className="min-h-screen py-8 px-4">
+    <main className="min-h-screen py-8 px-4 bg-noir-bg">
       <div className="max-w-6xl mx-auto">
         {/* Header */}
         <div className="text-center mb-8">
-          <h1 className="font-pixel text-3xl md:text-4xl text-retro-black mb-2">
+          <h1 className="font-pixel text-3xl md:text-4xl text-noir-white mb-2">
             CREATE MIXTAPE
           </h1>
         </div>
@@ -173,19 +174,19 @@ export function CreateMixtapeClient() {
                       goToStep(s.key);
                     }
                   }}
-                  className={`font-pixel text-[10px] md:text-xs px-3 py-2 border-2 transition-colors ${
+                  className={`font-pixel text-[10px] md:text-xs px-3 py-2 border transition-colors ${
                     step === s.key
-                      ? 'bg-retro-orange text-white border-retro-brown'
+                      ? 'bg-noir-white text-noir-bg border-noir-white'
                       : index < currentStepIndex || (s.key === 'share' && mixtapeId)
-                      ? 'bg-retro-teal text-white border-retro-navy cursor-pointer hover:bg-retro-navy'
-                      : 'bg-retro-cream text-retro-brown border-retro-brown opacity-50 cursor-not-allowed'
+                      ? 'bg-noir-surface text-noir-light border-noir-border cursor-pointer hover:bg-noir-border'
+                      : 'bg-noir-bg text-noir-muted border-noir-border opacity-50 cursor-not-allowed'
                   }`}
                   disabled={index > currentStepIndex && !(s.key === 'share' && mixtapeId)}
                 >
                   {index + 1}. {s.label}
                 </button>
                 {index < STEPS.length - 1 && (
-                  <div className="w-4 md:w-8 h-0.5 bg-retro-brown mx-1" />
+                  <div className="w-4 md:w-8 h-0.5 bg-noir-border mx-1" />
                 )}
               </div>
             ))}
@@ -208,7 +209,7 @@ export function CreateMixtapeClient() {
             <div className="grid md:grid-cols-2 gap-8">
               {/* Search */}
               <div className="card-retro">
-                <h2 className="font-pixel text-sm text-retro-brown mb-4">
+                <h2 className="font-pixel text-sm text-noir-muted mb-4">
                   SEARCH TRACKS
                 </h2>
                 <TrackSearch
@@ -219,7 +220,7 @@ export function CreateMixtapeClient() {
 
               {/* Track List */}
               <div className="card-retro">
-                <h2 className="font-pixel text-sm text-retro-brown mb-4">
+                <h2 className="font-pixel text-sm text-noir-muted mb-4">
                   YOUR MIXTAPE ({tracks.length}/{MAX_TRACKS})
                 </h2>
                 <TrackList
@@ -256,7 +257,7 @@ export function CreateMixtapeClient() {
 
             {/* Form */}
             <div className="card-retro">
-              <h2 className="font-pixel text-sm text-retro-brown mb-4">
+              <h2 className="font-pixel text-sm text-noir-muted mb-4">
                 ADD DETAILS
               </h2>
               <MixtapeForm
@@ -270,7 +271,7 @@ export function CreateMixtapeClient() {
             <div className="flex justify-center">
               <button
                 onClick={() => setStep('tracks')}
-                className="font-pixel text-xs text-retro-brown hover:text-retro-orange transition-colors"
+                className="font-pixel text-xs text-noir-muted hover:text-noir-white transition-colors"
               >
                 &larr; BACK TO TRACKS
               </button>
@@ -283,10 +284,10 @@ export function CreateMixtapeClient() {
             {/* Success Message */}
             <div className="text-center">
               <div className="text-6xl mb-4">&#127926;</div>
-              <h2 className="font-pixel text-xl text-retro-black mb-2">
+              <h2 className="font-pixel text-xl text-noir-white mb-2">
                 MIXTAPE CREATED!
               </h2>
-              <p className="text-retro-navy">
+              <p className="text-noir-text">
                 Your mixtape &quot;{formData.title}&quot; is ready to share with {formData.recipientName}!
               </p>
             </div>
@@ -302,7 +303,7 @@ export function CreateMixtapeClient() {
 
             {/* Share Options */}
             <div className="card-retro space-y-4">
-              <h3 className="font-pixel text-sm text-retro-brown mb-4">
+              <h3 className="font-pixel text-sm text-noir-muted mb-4">
                 SHARE YOUR MIXTAPE
               </h3>
 
@@ -321,22 +322,22 @@ export function CreateMixtapeClient() {
                 </button>
                 <button
                   onClick={shareViaWhatsApp}
-                  className="btn-retro text-center bg-retro-teal"
+                  className="btn-secondary text-center"
                 >
                   WHATSAPP
                 </button>
                 <button
                   onClick={copyLink}
-                  className="btn-retro text-center bg-retro-navy"
+                  className="btn-secondary text-center"
                 >
                   COPY LINK
                 </button>
               </div>
 
               {/* Share URL Display */}
-              <div className="mt-4 p-3 bg-retro-cream border-2 border-retro-brown break-all">
-                <p className="font-pixel text-[10px] text-retro-brown mb-1">LINK:</p>
-                <p className="text-sm text-retro-black">{shareUrl}</p>
+              <div className="mt-4 p-3 bg-noir-bg border border-noir-border break-all">
+                <p className="font-pixel text-[10px] text-noir-muted mb-1">LINK:</p>
+                <p className="text-sm text-noir-light">{shareUrl}</p>
               </div>
             </div>
 
@@ -350,7 +351,7 @@ export function CreateMixtapeClient() {
                   setShareUrl(null);
                   setStep('tracks');
                 }}
-                className="font-pixel text-xs text-retro-brown hover:text-retro-orange transition-colors"
+                className="font-pixel text-xs text-noir-muted hover:text-noir-white transition-colors"
               >
                 CREATE ANOTHER MIXTAPE
               </button>

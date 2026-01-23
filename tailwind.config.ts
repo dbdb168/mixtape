@@ -13,14 +13,27 @@ const config: Config = {
         body: ['var(--font-body)', 'sans-serif'],
       },
       colors: {
+        // Noir palette - dark monochrome aesthetic
+        noir: {
+          bg: '#0A0A0A',         // Deep black background
+          surface: '#141414',    // Card/elevated surfaces
+          border: '#2A2A2A',     // Subtle borders
+          muted: '#525252',      // Muted text
+          text: '#A3A3A3',       // Secondary text
+          light: '#E5E5E5',      // Primary text
+          white: '#FAFAFA',      // Brightest text
+          accent: '#F5F5F5',     // Accent (soft white)
+          highlight: '#D4D4D4',  // Hover states
+        },
+        // Legacy retro colors (mapped to noir)
         retro: {
-          cream: '#F5E6D3',
-          brown: '#8B4513',
-          orange: '#D2691E',
-          red: '#CD5C5C',
-          teal: '#5F9EA0',
-          navy: '#2C3E50',
-          black: '#1A1A2E',
+          cream: '#0A0A0A',      // Now dark
+          brown: '#525252',      // Now muted gray
+          orange: '#E5E5E5',     // Now light (for CTAs)
+          red: '#B91C1C',        // Error red
+          teal: '#A3A3A3',       // Now secondary gray
+          navy: '#D4D4D4',       // Now light gray
+          black: '#FAFAFA',      // Now white (inverted)
         },
       },
       animation: {

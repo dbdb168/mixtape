@@ -1,34 +1,26 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { nanoid } from 'nanoid';
-import { getSession } from '@/lib/auth/session';
-import { createPlaylist } from '@/lib/spotify/api';
 
 interface TrackInput {
-  spotifyTrackId: string;
-  trackName: string;
-  artistName: string;
-  albumArtUrl: string | null;
-  durationMs: number | null;
-  uri: string;
+  id: string; // Apple Music track ID
+  name: string;
+  artist: string;
+  album: string;
+  albumArt: string | null;
+  duration: number | null;
 }
 
 interface CreateMixtapeRequest {
   title: string;
   recipientName: string;
+  recipientEmail?: string;
+  recipientPhone?: string;
   message?: string;
   tracks: TrackInput[];
-  saveToSpotify?: boolean;
 }
 
 export async function POST(request: NextRequest) {
-  // Check session
-  const session = await getSession();
-
-  if (!session) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-  }
-
   try {
     const body: CreateMixtapeRequest = await request.json();
 
@@ -38,7 +30,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: validationError }, { status: 400 });
     }
 
-    const { title, recipientName, message, tracks, saveToSpotify } = body;
+    const { title, recipientName, recipientEmail, recipientPhone, message, tracks } = body;
 
     // Generate share token
     const shareToken = nanoid(12);
@@ -49,14 +41,15 @@ export async function POST(request: NextRequest) {
       process.env.SUPABASE_SERVICE_ROLE_KEY!
     );
 
-    // Insert mixtape
+    // Insert mixtape (no user_id for anonymous creation)
     const { data: mixtape, error: mixtapeError } = await supabase
       .from('mixtapes')
       .insert({
-        user_id: session.userId,
         share_token: shareToken,
         title,
         recipient_name: recipientName,
+        recipient_email: recipientEmail || null,
+        recipient_phone: recipientPhone || null,
         message: message || null,
       })
       .select()
@@ -73,12 +66,12 @@ export async function POST(request: NextRequest) {
     // Insert tracks
     const trackInserts = tracks.map((track, index) => ({
       mixtape_id: mixtape.id,
-      spotify_track_id: track.spotifyTrackId,
+      spotify_track_id: track.id, // Legacy field name, stores Apple Music ID
       position: index + 1,
-      track_name: track.trackName,
-      artist_name: track.artistName,
-      album_art_url: track.albumArtUrl,
-      duration_ms: track.durationMs,
+      track_name: track.name,
+      artist_name: track.artist,
+      album_art_url: track.albumArt,
+      duration_ms: track.duration,
     }));
 
     const { error: tracksError } = await supabase
@@ -98,30 +91,12 @@ export async function POST(request: NextRequest) {
     // Insert analytics event
     await supabase.from('events').insert({
       mixtape_id: mixtape.id,
-      user_id: session.userId,
       event_type: 'mixtape_created',
       metadata: { track_count: tracks.length },
     });
 
-    // Save to Spotify if requested
-    if (saveToSpotify) {
-      try {
-        const trackUris = tracks.map((track) => track.uri);
-        await createPlaylist(
-          session.accessToken,
-          session.userId,
-          title,
-          trackUris
-        );
-      } catch (spotifyError) {
-        console.error('Spotify playlist creation error:', spotifyError);
-        // Continue - mixtape was created, just Spotify failed
-      }
-    }
-
     return NextResponse.json({
-      id: mixtape.id,
-      shareToken,
+      id: shareToken,
     });
   } catch (error) {
     console.error('Create mixtape error:', error);
@@ -172,17 +147,14 @@ function validateRequest(body: CreateMixtapeRequest): string | null {
 
   // Validate each track
   for (const track of body.tracks) {
-    if (!track.spotifyTrackId || typeof track.spotifyTrackId !== 'string') {
-      return 'Each track must have a spotifyTrackId';
+    if (!track.id || typeof track.id !== 'string') {
+      return 'Each track must have an id';
     }
-    if (!track.trackName || typeof track.trackName !== 'string') {
-      return 'Each track must have a trackName';
+    if (!track.name || typeof track.name !== 'string') {
+      return 'Each track must have a name';
     }
-    if (!track.artistName || typeof track.artistName !== 'string') {
-      return 'Each track must have an artistName';
-    }
-    if (!track.uri || typeof track.uri !== 'string') {
-      return 'Each track must have a uri';
+    if (!track.artist || typeof track.artist !== 'string') {
+      return 'Each track must have an artist';
     }
   }
 

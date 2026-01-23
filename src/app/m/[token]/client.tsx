@@ -2,7 +2,6 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { DancingAvatar } from '@/components/DancingAvatar';
 import { CassetteTape } from '@/components/CassetteTape';
 
 interface MixtapeData {
@@ -10,14 +9,12 @@ interface MixtapeData {
   title: string;
   recipientName: string;
   message: string | null;
-  photoUrl: string | null;
-  senderName: string | null;
   createdAt: string;
 }
 
 interface TrackData {
   id: string;
-  spotifyTrackId: string;
+  trackId: string; // Apple Music track ID
   name: string;
   artist: string;
   albumArt: string | null;
@@ -38,52 +35,36 @@ function formatDuration(ms: number | null): string {
 }
 
 export function MixtapeViewer({ mixtape, tracks }: MixtapeViewerProps) {
-  const [selectedTrackId, setSelectedTrackId] = useState<string | null>(null);
-  const [isPlaying, setIsPlaying] = useState(false);
+  const [selectedTrackIndex, setSelectedTrackIndex] = useState<number | null>(null);
 
-  const selectedTrack = tracks.find((t) => t.spotifyTrackId === selectedTrackId);
+  const selectedTrack = selectedTrackIndex !== null ? tracks[selectedTrackIndex] : null;
 
-  const handleTrackClick = (spotifyTrackId: string) => {
-    if (selectedTrackId === spotifyTrackId) {
-      // Toggle play state if same track
-      setIsPlaying(!isPlaying);
-    } else {
-      setSelectedTrackId(spotifyTrackId);
-      setIsPlaying(true);
-    }
+  const handleTrackClick = (index: number) => {
+    setSelectedTrackIndex(index);
   };
 
   return (
-    <main className="min-h-screen py-8 px-4">
+    <main className="min-h-screen py-8 px-4 bg-noir-bg">
       <div className="max-w-2xl mx-auto space-y-8">
         {/* Header */}
         <div className="text-center space-y-4">
-          <h1 className="font-pixel text-2xl md:text-3xl text-retro-black">
+          <h1 className="font-pixel text-2xl md:text-3xl text-noir-white">
             {mixtape.title}
           </h1>
-          <p className="font-pixel text-sm text-retro-brown">
+          <p className="font-pixel text-sm text-noir-muted">
             FOR: {mixtape.recipientName}
           </p>
-        </div>
-
-        {/* Sender Avatar */}
-        <div className="flex justify-center">
-          <DancingAvatar
-            photoUrl={mixtape.photoUrl}
-            senderName={mixtape.senderName}
-            isPlaying={isPlaying}
-          />
         </div>
 
         {/* Message Speech Bubble */}
         {mixtape.message && (
           <div className="relative mx-auto max-w-md">
             <div className="card-retro relative">
-              <p className="text-retro-navy text-center italic">
+              <p className="text-noir-text text-center italic">
                 &ldquo;{mixtape.message}&rdquo;
               </p>
               {/* Speech bubble tail */}
-              <div className="absolute -top-3 left-1/2 -translate-x-1/2 w-0 h-0 border-l-8 border-r-8 border-b-8 border-l-transparent border-r-transparent border-b-retro-black"></div>
+              <div className="absolute -top-3 left-1/2 -translate-x-1/2 w-0 h-0 border-l-8 border-r-8 border-b-8 border-l-transparent border-r-transparent border-b-noir-border"></div>
             </div>
           </div>
         )}
@@ -95,18 +76,18 @@ export function MixtapeViewer({ mixtape, tracks }: MixtapeViewerProps) {
 
         {/* Track List */}
         <div className="card-retro">
-          <h2 className="font-pixel text-sm text-retro-brown mb-4">
+          <h2 className="font-pixel text-sm text-noir-muted mb-4">
             TRACKLIST
           </h2>
           <div className="space-y-2">
             {tracks.map((track, index) => (
               <button
                 key={track.id}
-                onClick={() => handleTrackClick(track.spotifyTrackId)}
-                className={`w-full flex items-center gap-3 p-2 border-2 transition-colors text-left ${
-                  selectedTrackId === track.spotifyTrackId
-                    ? 'bg-retro-orange text-white border-retro-brown'
-                    : 'bg-retro-cream border-retro-brown hover:bg-retro-orange/20'
+                onClick={() => handleTrackClick(index)}
+                className={`w-full flex items-center gap-3 p-2 border transition-colors text-left ${
+                  selectedTrackIndex === index
+                    ? 'bg-noir-white text-noir-bg border-noir-white'
+                    : 'bg-noir-bg border-noir-border hover:bg-noir-border'
                 }`}
               >
                 {/* Track Number */}
@@ -115,7 +96,7 @@ export function MixtapeViewer({ mixtape, tracks }: MixtapeViewerProps) {
                 </span>
 
                 {/* Album Art */}
-                <div className="w-10 h-10 bg-retro-navy flex-shrink-0">
+                <div className="w-10 h-10 bg-noir-border flex-shrink-0">
                   {track.albumArt ? (
                     <img
                       src={track.albumArt}
@@ -133,18 +114,18 @@ export function MixtapeViewer({ mixtape, tracks }: MixtapeViewerProps) {
                 <div className="flex-1 min-w-0">
                   <p
                     className={`font-pixel text-[10px] truncate ${
-                      selectedTrackId === track.spotifyTrackId
-                        ? 'text-white'
-                        : 'text-retro-black'
+                      selectedTrackIndex === index
+                        ? 'text-noir-bg'
+                        : 'text-noir-light'
                     }`}
                   >
                     {track.name}
                   </p>
                   <p
                     className={`text-xs truncate ${
-                      selectedTrackId === track.spotifyTrackId
-                        ? 'text-white/80'
-                        : 'text-retro-navy'
+                      selectedTrackIndex === index
+                        ? 'text-noir-bg/70'
+                        : 'text-noir-text'
                     }`}
                   >
                     {track.artist}
@@ -154,9 +135,9 @@ export function MixtapeViewer({ mixtape, tracks }: MixtapeViewerProps) {
                 {/* Duration */}
                 <span
                   className={`font-pixel text-[10px] ${
-                    selectedTrackId === track.spotifyTrackId
-                      ? 'text-white'
-                      : 'text-retro-brown'
+                    selectedTrackIndex === index
+                      ? 'text-noir-bg'
+                      : 'text-noir-muted'
                   }`}
                 >
                   {formatDuration(track.durationMs)}
@@ -166,25 +147,29 @@ export function MixtapeViewer({ mixtape, tracks }: MixtapeViewerProps) {
           </div>
         </div>
 
-        {/* Spotify Embed Player */}
+        {/* Apple Music Embed Player */}
         {selectedTrack && (
           <div className="space-y-2">
             <div className="card-retro p-4">
-              <h3 className="font-pixel text-xs text-retro-brown mb-3">
+              <h3 className="font-pixel text-xs text-noir-muted mb-3">
                 NOW PLAYING
               </h3>
               <iframe
-                src={`https://open.spotify.com/embed/track/${selectedTrack.spotifyTrackId}?utm_source=generator&theme=0`}
-                width="100%"
-                height="152"
+                allow="autoplay *; encrypted-media *; fullscreen *; clipboard-write"
                 frameBorder="0"
-                allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
-                loading="lazy"
-                className="rounded-lg"
+                height="175"
+                style={{
+                  width: '100%',
+                  overflow: 'hidden',
+                  borderRadius: '10px',
+                  backgroundColor: 'transparent',
+                }}
+                sandbox="allow-forms allow-popups allow-same-origin allow-scripts allow-storage-access-by-user-activation allow-top-navigation-by-user-activation"
+                src={`https://embed.music.apple.com/us/song/${selectedTrack.trackId}?app=music`}
               />
             </div>
-            <p className="text-center text-xs text-retro-brown">
-              Spotify Premium plays full tracks. Free users get 30-second previews.
+            <p className="text-center text-xs text-noir-muted">
+              Apple Music subscribers get full tracks. Others hear 30-second previews.
             </p>
           </div>
         )}
@@ -192,21 +177,54 @@ export function MixtapeViewer({ mixtape, tracks }: MixtapeViewerProps) {
         {/* No Track Selected Prompt */}
         {!selectedTrack && (
           <div className="text-center p-4">
-            <p className="font-pixel text-xs text-retro-brown">
+            <p className="font-pixel text-xs text-noir-muted">
               TAP A TRACK TO PLAY
             </p>
           </div>
         )}
 
+        {/* Track Navigation */}
+        {selectedTrack && tracks.length > 1 && (
+          <div className="flex items-center justify-between px-4">
+            <button
+              onClick={() => setSelectedTrackIndex((i) => i !== null ? Math.max(0, i - 1) : 0)}
+              disabled={selectedTrackIndex === 0}
+              className={`font-pixel text-xs px-4 py-2 border border-noir-border ${
+                selectedTrackIndex === 0
+                  ? 'opacity-50 cursor-not-allowed bg-noir-bg text-noir-muted'
+                  : 'bg-noir-surface text-noir-light hover:bg-noir-border'
+              }`}
+            >
+              ← PREV
+            </button>
+
+            <span className="font-pixel text-xs text-noir-muted">
+              {selectedTrackIndex !== null ? selectedTrackIndex + 1 : 1} / {tracks.length}
+            </span>
+
+            <button
+              onClick={() => setSelectedTrackIndex((i) => i !== null ? Math.min(tracks.length - 1, i + 1) : 0)}
+              disabled={selectedTrackIndex === tracks.length - 1}
+              className={`font-pixel text-xs px-4 py-2 border border-noir-border ${
+                selectedTrackIndex === tracks.length - 1
+                  ? 'opacity-50 cursor-not-allowed bg-noir-bg text-noir-muted'
+                  : 'bg-noir-surface text-noir-light hover:bg-noir-border'
+              }`}
+            >
+              NEXT →
+            </button>
+          </div>
+        )}
+
         {/* CTA - Viral Loop */}
-        <div className="text-center space-y-4 pt-8 border-t-4 border-dashed border-retro-brown">
-          <p className="font-pixel text-sm text-retro-navy">
+        <div className="text-center space-y-4 pt-8 border-t border-dashed border-noir-border">
+          <p className="font-pixel text-sm text-noir-text">
             WANT TO MAKE YOUR OWN?
           </p>
-          <Link href="/api/auth/spotify" className="btn-retro inline-block">
+          <Link href="/create" className="btn-retro inline-block">
             MAKE A MIXTAPE
           </Link>
-          <p className="text-xs text-retro-brown">
+          <p className="text-xs text-noir-muted">
             Share the love with your friends
           </p>
         </div>
@@ -215,7 +233,7 @@ export function MixtapeViewer({ mixtape, tracks }: MixtapeViewerProps) {
         <footer className="text-center pt-4">
           <Link
             href="/"
-            className="font-pixel text-xs text-retro-brown hover:text-retro-orange transition-colors"
+            className="font-pixel text-xs text-noir-muted hover:text-noir-white transition-colors"
           >
             MIXTAPE
           </Link>

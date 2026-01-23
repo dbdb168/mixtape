@@ -17,33 +17,33 @@ const reasons = [
     emoji: '😢',
     title: 'TRACK REMOVED',
     description:
-      "The artist or their label removed this track from Spotify. Sometimes songs get pulled due to contract disputes, re-releases, or the artist's own choice. The music industry moves in mysterious ways.",
+      "The artist or their label removed this track from Apple Music. Sometimes songs get pulled due to contract disputes, re-releases, or the artist's own choice. The music industry moves in mysterious ways.",
   },
   {
     emoji: '⏳',
     title: 'TEMPORARY GLITCH',
     description:
-      "Spotify might be having a moment. Try refreshing the page or coming back in a few minutes. Even the best music services have off days.",
+      "Apple Music might be having a moment. Try refreshing the page or coming back in a few minutes. Even the best music services have off days.",
   },
   {
     emoji: '🎧',
-    title: 'SPOTIFY FREE VS PREMIUM',
+    title: 'SUBSCRIPTION REQUIRED',
     description:
-      "If you're using Spotify Free, you'll hear 30-second previews instead of full tracks. To listen to complete songs, you'll need a Spotify Premium account. The person who made this mixtape for you wanted you to hear the whole thing!",
+      "Without an Apple Music subscription, you'll hear 30-second previews instead of full tracks. To listen to complete songs, you'll need an Apple Music subscription. The person who made this mixtape for you wanted you to hear the whole thing!",
   },
 ];
 
 export default function WhyNoMusicPage() {
   return (
-    <main className="min-h-screen bg-retro-cream py-12 px-4">
+    <main className="min-h-screen bg-noir-bg py-12 px-4">
       <div className="max-w-2xl mx-auto">
         {/* Header */}
-        <h1 className="font-pixel text-2xl md:text-3xl text-retro-navy text-center leading-relaxed mb-4">
+        <h1 className="font-pixel text-2xl md:text-3xl text-noir-white text-center leading-relaxed mb-4">
           WHY CAN&apos;T I HEAR THESE TRACKS?
         </h1>
 
         {/* Intro */}
-        <p className="text-center text-retro-navy mb-10 text-lg">
+        <p className="text-center text-noir-text mb-10 text-lg">
           Music licensing is complicated. Here&apos;s what might have happened:
         </p>
 
@@ -56,10 +56,10 @@ export default function WhyNoMusicPage() {
                   {reason.emoji}
                 </span>
                 <div>
-                  <h2 className="font-pixel text-sm text-retro-navy mb-2">
+                  <h2 className="font-pixel text-sm text-noir-light mb-2">
                     {reason.title}
                   </h2>
-                  <p className="text-retro-navy leading-relaxed">
+                  <p className="text-noir-text leading-relaxed">
                     {reason.description}
                   </p>
                 </div>
@@ -70,7 +70,7 @@ export default function WhyNoMusicPage() {
 
         {/* Footer CTA */}
         <div className="mt-12 text-center space-y-4">
-          <p className="font-pixel text-lg text-retro-navy">
+          <p className="font-pixel text-lg text-noir-light">
             DON&apos;T LET THIS STOP YOU
           </p>
           <Link href="/" className="btn-retro inline-block">
