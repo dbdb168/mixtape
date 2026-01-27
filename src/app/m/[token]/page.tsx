@@ -68,7 +68,7 @@ export async function generateMetadata({
 
   const trackCount = mixtape.tracks?.length || 0;
 
-  const senderName = mixtape.sender_name || 'Someone special';
+  const senderName = mixtape.sender_name || 'Someone';
 
   return {
     title: `🎵 ${senderName} sent you a mixtape!`,

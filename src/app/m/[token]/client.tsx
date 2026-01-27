@@ -303,9 +303,9 @@ export function MixtapeViewer({ mixtape, tracks }: MixtapeViewerProps) {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {/* Send one back CTA */}
               <div className="bg-white/5 border border-white/10 rounded-xl p-6 space-y-3">
-                <p className="text-lg font-bold">Send one back?</p>
+                <p className="text-lg font-bold">Send one back or send one to somebody else</p>
                 <Link href="/create" className="btn-primary inline-flex items-center gap-3 text-sm">
-                  Send one to somebody else
+                  Create a Mixtape
                 </Link>
               </div>
 
@@ -316,7 +316,7 @@ export function MixtapeViewer({ mixtape, tracks }: MixtapeViewerProps) {
                   <h4 className="text-sm font-bold">The AI Cookbook</h4>
                 </div>
                 <p className="text-sm text-white/60 leading-relaxed">
-                  If you enjoyed this, you might enjoy some things I&apos;m writing about on Substack.{' '}
+                  I am not a developer. I cannot write code. I made Mixtape as a project to inspire other non-developers to learn to build for themselves. You can read about my journey at The AI Cookbook.{' '}
                   <a
                     href="https://theaicookbook.substack.com"
                     target="_blank"

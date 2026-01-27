@@ -183,3 +183,44 @@ function validateRequest(body: CreateMixtapeRequest): string | null {
 
   return null;
 }
+
+// PATCH - Update mixtape details (sender name, recipient name, message)
+export async function PATCH(request: NextRequest) {
+  try {
+    const body = await request.json();
+    const { shareToken, senderName, recipientName, message } = body;
+
+    if (!shareToken) {
+      return NextResponse.json({ error: 'Share token is required' }, { status: 400 });
+    }
+
+    const supabase = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.SUPABASE_SERVICE_ROLE_KEY!
+    );
+
+    const updateData: Record<string, string> = {};
+    if (senderName !== undefined) updateData.sender_name = senderName;
+    if (recipientName !== undefined) updateData.recipient_name = recipientName;
+    if (message !== undefined) updateData.message = message;
+
+    if (Object.keys(updateData).length === 0) {
+      return NextResponse.json({ error: 'No fields to update' }, { status: 400 });
+    }
+
+    const { error } = await supabase
+      .from('mixtapes')
+      .update(updateData)
+      .eq('share_token', shareToken);
+
+    if (error) {
+      console.error('Mixtape update error:', error);
+      return NextResponse.json({ error: 'Failed to update mixtape' }, { status: 500 });
+    }
+
+    return NextResponse.json({ success: true });
+  } catch (error) {
+    console.error('Update mixtape error:', error);
+    return NextResponse.json({ error: 'Failed to update mixtape' }, { status: 500 });
+  }
+}

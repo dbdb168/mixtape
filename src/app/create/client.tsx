@@ -135,7 +135,7 @@ export function CreateMixtapeClient() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           title: mixtapeTitle || 'My Mixtape',
-          senderName: senderName || 'Someone special',
+          senderName: senderName || 'Someone',
           recipientName: recipientName || 'You',
           recipientEmail: recipientEmail || undefined,
           message: message || undefined,
@@ -161,6 +161,25 @@ export function CreateMixtapeClient() {
     } catch (error) {
       toast.error(error instanceof Error ? error.message : 'Failed to create mixtape');
       return null;
+    }
+  };
+
+  // Update mixtape details (called when form fields change)
+  const updateMixtape = async (updates: { senderName?: string; recipientName?: string; message?: string }) => {
+    if (!shareUrl) return;
+
+    // Extract share token from URL
+    const shareToken = shareUrl.split('/m/')[1];
+    if (!shareToken) return;
+
+    try {
+      await fetch('/api/mixtapes', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ shareToken, ...updates }),
+      });
+    } catch (error) {
+      console.error('Failed to update mixtape:', error);
     }
   };
 
@@ -416,20 +435,6 @@ export function CreateMixtapeClient() {
               </div>
 
 
-              {/* Make Another */}
-              {shareUrl && (
-                <button
-                  onClick={() => {
-                    setTracks([]);
-                    setShareUrl(null);
-                    setMixtapeTitle('');
-                    setStep('tracks');
-                  }}
-                  className="text-xs text-white/40 hover:text-white transition-colors"
-                >
-                  Make another mixtape →
-                </button>
-              )}
             </div>
 
             {/* Right - Send Form */}
@@ -451,6 +456,7 @@ export function CreateMixtapeClient() {
                         type="text"
                         value={senderName}
                         onChange={(e) => setSenderName(e.target.value)}
+                        onBlur={() => updateMixtape({ senderName: senderName.trim() || undefined })}
                         placeholder="Tim"
                         className="form-input"
                       />
@@ -463,6 +469,7 @@ export function CreateMixtapeClient() {
                         type="text"
                         value={recipientName}
                         onChange={(e) => setRecipientName(e.target.value)}
+                        onBlur={() => updateMixtape({ recipientName: recipientName.trim() || undefined })}
                         placeholder="Sarah"
                         className="form-input"
                       />
@@ -477,6 +484,7 @@ export function CreateMixtapeClient() {
                     <textarea
                       value={message}
                       onChange={(e) => setMessage(e.target.value.slice(0, 200))}
+                      onBlur={() => updateMixtape({ message: message.trim() || undefined })}
                       placeholder="Write a personal note..."
                       className="form-input resize-none"
                       rows={3}
@@ -583,7 +591,7 @@ export function CreateMixtapeClient() {
                       <h4 className="text-sm font-bold">The AI Cookbook</h4>
                     </div>
                     <p className="text-sm text-white/60 leading-relaxed">
-                      If you enjoyed this, you might enjoy some things I&apos;m writing about on Substack.{' '}
+                      I am not a developer. I cannot write code. I made Mixtape as a project to inspire other non-developers to learn to build for themselves. You can read about my journey at The AI Cookbook.{' '}
                       <a
                         href="https://theaicookbook.substack.com"
                         target="_blank"
