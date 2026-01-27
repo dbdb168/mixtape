@@ -299,33 +299,38 @@ export function MixtapeViewer({ mixtape, tracks }: MixtapeViewerProps) {
               </div>
             )}
 
-            {/* CTA and Substack tiles */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {/* CTA and AI Cookbook tiles - full width stacked */}
+            <div className="space-y-4">
               {/* Send one back CTA */}
-              <div className="bg-white/5 border border-white/10 rounded-xl p-6 space-y-3">
+              <div className="bg-white/5 border border-white/10 rounded-xl p-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                 <p className="text-lg font-bold">Send one back or send one to somebody else</p>
-                <Link href="/create" className="btn-primary inline-flex items-center gap-3 text-sm">
+                <Link href="/create" className="btn-primary inline-flex items-center justify-center gap-3 text-sm whitespace-nowrap">
                   Create a Mixtape
                 </Link>
               </div>
 
               {/* AI Cookbook promo */}
-              <div className="bg-white/5 border border-white/10 rounded-xl p-6 space-y-3">
-                <div className="flex items-center gap-3">
-                  <img src="/ai-cookbook-logo.jpeg" alt="AI Cookbook" className="size-8 rounded" />
-                  <h4 className="text-sm font-bold">The AI Cookbook</h4>
+              <div className="bg-white/5 border border-white/10 rounded-xl p-6">
+                <div className="flex flex-col sm:flex-row sm:items-start gap-4">
+                  <div className="flex items-center gap-3 shrink-0">
+                    <img src="/ai-cookbook-logo.jpeg" alt="AI Cookbook" className="size-8 rounded" />
+                    <h4 className="text-sm font-bold sm:hidden">The AI Cookbook</h4>
+                  </div>
+                  <div className="space-y-2">
+                    <h4 className="text-sm font-bold hidden sm:block">The AI Cookbook</h4>
+                    <p className="text-sm text-white/60 leading-relaxed">
+                      I am not a developer. I cannot write code. I made Mixtape as a project to inspire other non-developers to learn to build for themselves. You can read about my journey at The AI Cookbook.{' '}
+                      <a
+                        href="https://theaicookbook.substack.com"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-primary hover:underline font-bold"
+                      >
+                        Subscribe here.
+                      </a>
+                    </p>
+                  </div>
                 </div>
-                <p className="text-sm text-white/60 leading-relaxed">
-                  I am not a developer. I cannot write code. I made Mixtape as a project to inspire other non-developers to learn to build for themselves. You can read about my journey at The AI Cookbook.{' '}
-                  <a
-                    href="https://theaicookbook.substack.com"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-primary hover:underline font-bold"
-                  >
-                    Subscribe here.
-                  </a>
-                </p>
               </div>
             </div>
             </div>
