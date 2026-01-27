@@ -5,6 +5,18 @@ if (process.env.SENDGRID_API_KEY) {
   sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 }
 
+// HTML escape function to prevent XSS in email templates
+function escapeHtml(text: string): string {
+  const map: Record<string, string> = {
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    "'": '&#039;',
+  };
+  return text.replace(/[&<>"']/g, (char) => map[char]);
+}
+
 interface SendMixtapeEmailParams {
   recipientEmail: string;
   recipientName: string;
@@ -126,13 +138,19 @@ function generateMixtapeEmailHtml({
   message?: string;
   trackCount: number;
 }): string {
+  // Escape all user-provided content to prevent XSS
+  const safeRecipientName = escapeHtml(recipientName);
+  const safeSenderName = escapeHtml(senderName);
+  const safeMixtapeTitle = escapeHtml(mixtapeTitle);
+  const safeMessage = message ? escapeHtml(message) : undefined;
+
   return `
 <!DOCTYPE html>
 <html>
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>${mixtapeTitle}</title>
+  <title>${safeMixtapeTitle}</title>
 </head>
 <body style="margin: 0; padding: 0; background-color: #0a050f; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
   <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="background-color: #0a050f;">
@@ -172,7 +190,7 @@ function generateMixtapeEmailHtml({
                             <tr>
                               <td style="padding-top: 8px;">
                                 <div style="background-color: white; border: 1px solid #ddd; padding: 8px 12px; text-align: center;">
-                                  <span style="font-family: 'Marker Felt', 'Comic Sans MS', cursive; font-size: 16px; color: #000;">${mixtapeTitle}</span>
+                                  <span style="font-family: 'Marker Felt', 'Comic Sans MS', cursive; font-size: 16px; color: #000;">${safeMixtapeTitle}</span>
                                 </div>
                               </td>
                             </tr>
@@ -207,17 +225,17 @@ function generateMixtapeEmailHtml({
                 <tr>
                   <td style="padding: 10px 30px 20px; text-align: center;">
                     <p style="color: #ffffff; font-size: 22px; font-weight: bold; margin: 0 0 5px;">
-                      Hey ${recipientName}!
+                      Hey ${safeRecipientName}!
                     </p>
                     <p style="color: rgba(255,255,255,0.5); font-size: 14px; margin: 0;">
-                      ${senderName} sent you a mixtape
+                      ${safeSenderName} sent you a mixtape
                     </p>
                   </td>
                 </tr>
               </table>
 
               <!-- Message (if provided) -->
-              ${message ? `
+              ${safeMessage ? `
               <table role="presentation" width="100%" cellspacing="0" cellpadding="0">
                 <tr>
                   <td style="padding: 0 30px 20px;">
@@ -225,7 +243,7 @@ function generateMixtapeEmailHtml({
                       <tr>
                         <td style="padding: 15px;">
                           <p style="color: rgba(255,255,255,0.4); font-size: 10px; text-transform: uppercase; letter-spacing: 1px; margin: 0 0 8px;">Liner Notes</p>
-                          <p style="color: rgba(255,255,255,0.8); font-size: 14px; font-style: italic; margin: 0; line-height: 1.5;">"${message}"</p>
+                          <p style="color: rgba(255,255,255,0.8); font-size: 14px; font-style: italic; margin: 0; line-height: 1.5;">"${safeMessage}"</p>
                         </td>
                       </tr>
                     </table>

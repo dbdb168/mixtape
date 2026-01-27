@@ -6,6 +6,10 @@ import './globals.css';
 export const metadata: Metadata = {
   title: 'Mixtape - Make a mixtape for someone you care about',
   description: 'Create personalised music compilations and share them with friends. Pick songs, add a message, and send the love. Powered by Apple Music.',
+  icons: {
+    icon: '/icon.svg',
+    apple: '/apple-icon.svg',
+  },
   openGraph: {
     title: 'Mixtape',
     description: 'Make a mixtape for someone you care about',
