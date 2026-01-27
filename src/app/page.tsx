@@ -95,7 +95,7 @@ export default function Home() {
         </header>
 
         {/* Main Content */}
-        <main className="flex-1 flex flex-col items-center justify-center px-4 pb-20">
+        <main className="flex-1 flex flex-col items-center justify-center px-4 pb-20 pt-24 md:pt-0">
           <div className="w-full max-w-6xl grid lg:grid-cols-2 gap-12 items-center">
             {/* Left Side - Text */}
             <div className="space-y-10 text-center lg:text-left">

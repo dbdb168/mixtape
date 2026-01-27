@@ -22,6 +22,12 @@ const config: Config = {
         chrome: '#2d2d35',
         plastic: '#161118',
         'record-red': '#ff0000',
+        // Wire/admin theme colors
+        'wire-black': '#0a0a0a',
+        'wire-white': '#ffffff',
+        'wire-gray': '#888888',
+        'wire-dim': '#333333',
+        'wire-red': '#ff4444',
       },
       animation: {
         'spin-slow': 'spin 8s linear infinite',
