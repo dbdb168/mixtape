@@ -152,11 +152,6 @@ export function MixtapeViewer({ mixtape, tracks }: MixtapeViewerProps) {
                 &ldquo;{mixtape.message}&rdquo;
               </p>
             )}
-            <p className="text-xl">
-              <Link href="/create" className="text-primary hover:underline">
-                Want to make your own?
-              </Link>
-            </p>
           </div>
 
           {/* Main Content - Cassette on left, Tracklist on right */}
@@ -303,6 +298,41 @@ export function MixtapeViewer({ mixtape, tracks }: MixtapeViewerProps) {
                 </p>
               </div>
             )}
+
+            {/* CTA and Substack tiles */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {/* Send one back CTA */}
+              <div className="bg-white/5 border border-white/10 rounded-xl p-6 space-y-3">
+                <p className="text-lg font-bold">Send one back?</p>
+                <Link href="/create" className="btn-primary inline-flex items-center gap-3 text-sm">
+                  <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
+                  </svg>
+                  Create a Mixtape
+                </Link>
+              </div>
+
+              {/* Substack promo */}
+              <div className="bg-white/5 border border-white/10 rounded-xl p-6 space-y-3">
+                <div className="flex items-center gap-3">
+                  <div className="size-8 bg-[#ff4b00] rounded flex items-center justify-center">
+                    <span className="text-white font-black text-xs">S</span>
+                  </div>
+                  <h4 className="text-sm font-bold">The AI Cookbook</h4>
+                </div>
+                <p className="text-sm text-white/60 leading-relaxed">
+                  If you enjoyed this, you might enjoy some things I&apos;m writing about on Substack.{' '}
+                  <a
+                    href="https://theaicookbook.substack.com"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-primary hover:underline font-bold"
+                  >
+                    Subscribe here.
+                  </a>
+                </p>
+              </div>
+            </div>
             </div>
           </div>
         </div>

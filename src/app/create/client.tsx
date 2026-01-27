@@ -576,28 +576,26 @@ export function CreateMixtapeClient() {
                     </button>
                   </div>
 
-                  {/* Success / Substack promo */}
-                  {emailSent && (
-                    <div className="bg-white/5 border border-white/10 rounded-xl p-6 space-y-3">
-                      <div className="flex items-center gap-3">
-                        <div className="size-8 bg-[#ff4b00] rounded flex items-center justify-center">
-                          <span className="text-white font-black text-xs">S</span>
-                        </div>
-                        <h4 className="text-sm font-bold">The AI Cookbook</h4>
+                  {/* Substack promo */}
+                  <div className="bg-white/5 border border-white/10 rounded-xl p-6 space-y-3 mt-4">
+                    <div className="flex items-center gap-3">
+                      <div className="size-8 bg-[#ff4b00] rounded flex items-center justify-center">
+                        <span className="text-white font-black text-xs">S</span>
                       </div>
-                      <p className="text-sm text-white/60 leading-relaxed">
-                        If you enjoyed this, you might enjoy some things I&apos;m writing about on Substack.{' '}
-                        <a
-                          href="https://theaicookbook.substack.com"
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-primary hover:underline font-bold"
-                        >
-                          Subscribe here.
-                        </a>
-                      </p>
+                      <h4 className="text-sm font-bold">The AI Cookbook</h4>
                     </div>
-                  )}
+                    <p className="text-sm text-white/60 leading-relaxed">
+                      If you enjoyed this, you might enjoy some things I&apos;m writing about on Substack.{' '}
+                      <a
+                        href="https://theaicookbook.substack.com"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-primary hover:underline font-bold"
+                      >
+                        Subscribe here.
+                      </a>
+                    </p>
+                  </div>
                 </>
               )}
             </div>
