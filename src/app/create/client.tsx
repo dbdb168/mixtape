@@ -576,12 +576,10 @@ export function CreateMixtapeClient() {
                     </button>
                   </div>
 
-                  {/* Substack promo */}
+                  {/* AI Cookbook promo */}
                   <div className="bg-white/5 border border-white/10 rounded-xl p-6 space-y-3 mt-4">
                     <div className="flex items-center gap-3">
-                      <div className="size-8 bg-[#ff4b00] rounded flex items-center justify-center">
-                        <span className="text-white font-black text-xs">S</span>
-                      </div>
+                      <img src="/ai-cookbook-logo.jpeg" alt="AI Cookbook" className="size-8 rounded" />
                       <h4 className="text-sm font-bold">The AI Cookbook</h4>
                     </div>
                     <p className="text-sm text-white/60 leading-relaxed">
