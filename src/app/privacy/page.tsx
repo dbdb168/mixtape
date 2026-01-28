@@ -40,17 +40,17 @@ export default function PrivacyPolicy() {
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-primary">•</span>
-                  Personal messages you write for recipients
+                  Names and personal messages you write for recipients
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-primary">•</span>
-                  Recipient contact information (email or phone) you provide for sharing
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-primary">•</span>
-                  Optional: your email address if you subscribe to our newsletter
+                  Basic analytics (when mixtapes are viewed, when links are clicked)
                 </li>
               </ul>
+              <p className="text-sm text-white/50 leading-relaxed mt-4 pt-4 border-t border-white/10">
+                <strong className="text-white/70">Note:</strong> Recipient email addresses are used only to send
+                the mixtape notification and are not stored in our database.
+              </p>
             </section>
 
             <section className="bg-[#1a1a1f] border border-white/10 rounded-xl p-6">
@@ -73,7 +73,7 @@ export default function PrivacyPolicy() {
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-primary">•</span>
-                  Sending occasional updates if you opted into our newsletter
+                  Understanding how people use Mixtape to improve the experience
                 </li>
               </ul>
               <p className="text-sm text-white/70 leading-relaxed mt-4 pt-4 border-t border-white/10">
@@ -96,8 +96,17 @@ export default function PrivacyPolicy() {
                   Our database provider, which stores your mixtapes securely.
                 </li>
                 <li>
+                  <span className="text-white font-medium">SendGrid:</span>{' '}
+                  Our email provider, used to deliver mixtape notifications to recipients.
+                </li>
+                <li>
                   <span className="text-white font-medium">Vercel:</span>{' '}
                   Our hosting platform, which may collect standard analytics data.
+                </li>
+                <li>
+                  <span className="text-white font-medium">Substack:</span>{' '}
+                  If you subscribe to The AI Cookbook newsletter, that subscription is managed by Substack
+                  under their own privacy policy.
                 </li>
               </ul>
             </section>
@@ -116,18 +125,14 @@ export default function PrivacyPolicy() {
                   <span className="text-primary">•</span>
                   Request deletion of your mixtapes
                 </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-primary">•</span>
-                  Unsubscribe from marketing communications at any time
-                </li>
               </ul>
               <p className="text-sm text-white/70 leading-relaxed mt-4 pt-4 border-t border-white/10">
                 Contact us at{' '}
                 <a
-                  href="mailto:hello@buildfirst.io"
+                  href="mailto:hello@thisisluminary.co"
                   className="text-primary hover:underline"
                 >
-                  hello@buildfirst.io
+                  hello@thisisluminary.co
                 </a>
               </p>
             </section>
