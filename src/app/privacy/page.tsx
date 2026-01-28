@@ -129,10 +129,10 @@ export default function PrivacyPolicy() {
               <p className="text-sm text-white/70 leading-relaxed mt-4 pt-4 border-t border-white/10">
                 Contact us at{' '}
                 <a
-                  href="mailto:hello@thisisluminary.co"
+                  href="mailto:david@thisisluminary.co"
                   className="text-primary hover:underline"
                 >
-                  hello@thisisluminary.co
+                  david@thisisluminary.co
                 </a>
               </p>
             </section>

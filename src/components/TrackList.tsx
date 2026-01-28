@@ -53,8 +53,8 @@ export function TrackList({ tracks, onRemoveTrack, onReorderTracks, maxTracks = 
     <div className="flex flex-col h-full">
       {/* Header */}
       <div className="flex items-center justify-between mb-4">
-        <h3 className="text-xs font-pixel uppercase tracking-widest text-white/40">LINER NOTES: TRACKLIST</h3>
-        <span className="text-[10px] font-pixel text-primary">{tracks.length}/{maxTracks}</span>
+        <h3 className="text-base font-bold uppercase tracking-widest text-white">TRACK LIST</h3>
+        <span className="text-sm font-bold text-primary">{tracks.length}/{maxTracks}</span>
       </div>
 
       {/* Liner Notes Paper */}
@@ -111,13 +111,6 @@ export function TrackList({ tracks, onRemoveTrack, onReorderTracks, maxTracks = 
           )}
         </div>
 
-        {/* Message Area */}
-        <div className="mt-auto pt-4 border-t-2 border-black/10 relative z-10">
-          <p className="text-[8px] font-pixel text-black/40 uppercase mb-1">PERSONAL MESSAGE</p>
-          <p className="font-handwritten text-black/50 text-sm italic">
-            {tracks.length > 0 ? 'Add a note when you save...' : 'Your message will appear here...'}
-          </p>
-        </div>
       </div>
     </div>
   );

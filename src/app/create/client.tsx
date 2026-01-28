@@ -244,17 +244,17 @@ export function CreateMixtapeClient() {
             <div className="lg:col-span-3 bg-[#16161c] p-4 md:p-6 flex flex-col gap-4 border-b-2 lg:border-b-0 lg:border-r-2 border-white/10 max-h-[350px] lg:max-h-[500px] overflow-hidden">
               {/* Step indicators */}
               <div className="space-y-3 pb-3 border-b border-white/10">
-                <div className="flex items-center gap-2">
-                  <div className={`size-5 rounded-full flex items-center justify-center text-[10px] font-bold ${tracks.length > 0 ? 'bg-primary text-white' : 'bg-primary/20 border border-primary text-primary'}`}>1</div>
-                  <span className={`text-xs ${tracks.length > 0 ? 'text-white' : 'text-white/60'}`}>Search & add tracks</span>
+                <div className="flex items-center gap-3">
+                  <div className={`size-6 rounded-full flex items-center justify-center text-sm font-bold ${tracks.length > 0 ? 'bg-primary text-white' : 'bg-primary/20 border border-primary text-primary'}`}>1</div>
+                  <span className={`text-base font-bold ${tracks.length > 0 ? 'text-white' : 'text-white/60'}`}>Search & add tracks</span>
                 </div>
-                <div className="flex items-center gap-2">
-                  <div className="size-5 rounded-full bg-primary/20 border border-primary text-primary flex items-center justify-center text-[10px] font-bold">2</div>
-                  <span className="text-xs text-white/60">Name your tape</span>
+                <div className="flex items-center gap-3">
+                  <div className="size-6 rounded-full bg-primary/20 border border-primary text-primary flex items-center justify-center text-sm font-bold">2</div>
+                  <span className="text-base font-bold text-white/60">Name your tape</span>
                 </div>
-                <div className="flex items-center gap-2">
-                  <div className="size-5 rounded-full bg-white/10 text-white/40 flex items-center justify-center text-[10px] font-bold">3</div>
-                  <span className="text-xs text-white/40">Send it →</span>
+                <div className="flex items-center gap-3">
+                  <div className="size-6 rounded-full bg-primary/20 border border-primary text-primary flex items-center justify-center text-sm font-bold">3</div>
+                  <span className="text-base font-bold text-white/60">Send it →</span>
                 </div>
               </div>
 
