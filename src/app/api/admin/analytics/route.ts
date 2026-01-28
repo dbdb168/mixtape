@@ -113,18 +113,17 @@ export async function GET() {
       []) as RecentError[];
 
     // Process recent tracks with mixtape info
-    const recentTracks: RecentTrack[] = (recentTracksResult.data || []).map((track: {
-      id: string;
-      track_name: string;
-      artist_name: string;
-      mixtapes: { title: string; created_at: string } | null;
-    }) => ({
-      id: track.id,
-      track_name: track.track_name,
-      artist_name: track.artist_name,
-      mixtape_title: track.mixtapes?.title || 'Unknown',
-      created_at: track.mixtapes?.created_at || '',
-    }));
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const recentTracks: RecentTrack[] = (recentTracksResult.data || []).map((track: any) => {
+      const mixtape = track.mixtapes;
+      return {
+        id: track.id,
+        track_name: track.track_name,
+        artist_name: track.artist_name,
+        mixtape_title: mixtape?.title || 'Unknown',
+        created_at: mixtape?.created_at || '',
+      };
+    });
 
     return NextResponse.json({
       metrics,
