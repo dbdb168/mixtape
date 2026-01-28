@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
+import { trackEvent } from '@/lib/analytics/track';
 
 interface MixtapeData {
   id: string;
@@ -304,7 +305,11 @@ export function MixtapeViewer({ mixtape, tracks }: MixtapeViewerProps) {
               {/* Send one back CTA */}
               <div className="bg-white/5 border border-white/10 rounded-xl p-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                 <p className="text-lg font-bold">Send one back or send one to somebody else</p>
-                <Link href="/create" className="btn-primary inline-flex items-center justify-center gap-3 text-sm whitespace-nowrap">
+                <Link
+                  href="/create"
+                  className="btn-primary inline-flex items-center justify-center gap-3 text-sm whitespace-nowrap"
+                  onClick={() => trackEvent('cta_clicked', {}, mixtape.id)}
+                >
                   Create a Mixtape
                 </Link>
               </div>
