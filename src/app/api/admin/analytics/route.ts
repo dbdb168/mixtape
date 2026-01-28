@@ -3,15 +3,12 @@ import { createClient } from '@supabase/supabase-js';
 
 interface Metrics {
   mixtapesCreated: number;
-  totalUsers: number;
-  emailsCaptured: number;
   viralCoefficient: number;
   avgTracksPerMixtape: number;
 }
 
 interface Targets {
   mixtapesCreated: { target: number; stretch: number };
-  emailsCaptured: { target: number; stretch: number };
   viralCoefficient: { target: number; stretch: number };
   avgTracksPerMixtape: { target: number; stretch: number };
 }
@@ -20,6 +17,14 @@ interface RecentError {
   id: string;
   event_type: string;
   metadata: Record<string, unknown>;
+  created_at: string;
+}
+
+interface RecentTrack {
+  id: string;
+  track_name: string;
+  artist_name: string;
+  mixtape_title: string;
   created_at: string;
 }
 
@@ -34,22 +39,14 @@ export async function GET() {
     // Query all required data in parallel
     const [
       mixtapeCountResult,
-      userCountResult,
-      newsletterOptInsResult,
       viewEventsResult,
       ctaClickEventsResult,
       recentErrorsResult,
       tracksResult,
+      recentTracksResult,
     ] = await Promise.all([
       // Mixtape count
       supabase.from('mixtapes').select('*', { count: 'exact', head: true }),
-      // User count
-      supabase.from('users').select('*', { count: 'exact', head: true }),
-      // Newsletter opt-ins count
-      supabase
-        .from('users')
-        .select('*', { count: 'exact', head: true })
-        .eq('newsletter_opt_in', true),
       // View events (mixtape_viewed) for viral coefficient
       supabase
         .from('events')
@@ -69,11 +66,15 @@ export async function GET() {
         .limit(10),
       // Tracks for avg tracks per mixtape
       supabase.from('tracks').select('mixtape_id'),
+      // Recent tracks with mixtape info (last 50)
+      supabase
+        .from('tracks')
+        .select('id, track_name, artist_name, mixtape_id, mixtapes(title, created_at)')
+        .order('id', { ascending: false })
+        .limit(50),
     ]);
 
     const mixtapesCreated = mixtapeCountResult.count || 0;
-    const totalUsers = userCountResult.count || 0;
-    const emailsCaptured = newsletterOptInsResult.count || 0;
 
     // Calculate viral coefficient: cta_clicks / unique_mixtapes_viewed
     const ctaClicks = ctaClickEventsResult.count || 0;
@@ -98,15 +99,12 @@ export async function GET() {
 
     const metrics: Metrics = {
       mixtapesCreated,
-      totalUsers,
-      emailsCaptured,
       viralCoefficient: Math.round(viralCoefficient * 100) / 100,
       avgTracksPerMixtape: Math.round(avgTracksPerMixtape * 10) / 10,
     };
 
     const targets: Targets = {
       mixtapesCreated: { target: 500, stretch: 2000 },
-      emailsCaptured: { target: 200, stretch: 1000 },
       viralCoefficient: { target: 0.3, stretch: 0.5 },
       avgTracksPerMixtape: { target: 7, stretch: 9 },
     };
@@ -114,10 +112,25 @@ export async function GET() {
     const recentErrors: RecentError[] = (recentErrorsResult.data ||
       []) as RecentError[];
 
+    // Process recent tracks with mixtape info
+    const recentTracks: RecentTrack[] = (recentTracksResult.data || []).map((track: {
+      id: string;
+      track_name: string;
+      artist_name: string;
+      mixtapes: { title: string; created_at: string } | null;
+    }) => ({
+      id: track.id,
+      track_name: track.track_name,
+      artist_name: track.artist_name,
+      mixtape_title: track.mixtapes?.title || 'Unknown',
+      created_at: track.mixtapes?.created_at || '',
+    }));
+
     return NextResponse.json({
       metrics,
       targets,
       recentErrors,
+      recentTracks,
     });
   } catch (error) {
     console.error('Admin analytics error:', error);
