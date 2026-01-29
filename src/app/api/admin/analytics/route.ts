@@ -66,12 +66,12 @@ export async function GET() {
         .limit(10),
       // Tracks for avg tracks per mixtape
       supabase.from('tracks').select('mixtape_id'),
-      // Recent tracks with mixtape info (last 50)
+      // Recent mixtapes with tracks (last 20 mixtapes)
       supabase
-        .from('tracks')
-        .select('id, track_name, artist_name, mixtape_id, mixtapes(title, created_at)')
-        .order('id', { ascending: false })
-        .limit(50),
+        .from('mixtapes')
+        .select('id, title, created_at, sender_name, tracks(track_name, artist_name)')
+        .order('created_at', { ascending: false })
+        .limit(20),
     ]);
 
     const mixtapesCreated = mixtapeCountResult.count || 0;
@@ -112,17 +112,20 @@ export async function GET() {
     const recentErrors: RecentError[] = (recentErrorsResult.data ||
       []) as RecentError[];
 
-    // Process recent tracks with mixtape info
+    // Process recent mixtapes into flat track list
+    const recentTracks: RecentTrack[] = [];
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const recentTracks: RecentTrack[] = (recentTracksResult.data || []).map((track: any) => {
-      const mixtape = track.mixtapes;
-      return {
-        id: track.id,
-        track_name: track.track_name,
-        artist_name: track.artist_name,
-        mixtape_title: mixtape?.title || 'Unknown',
-        created_at: mixtape?.created_at || '',
-      };
+    (recentTracksResult.data || []).forEach((mixtape: any) => {
+      const tracks = mixtape.tracks || [];
+      tracks.forEach((track: { track_name: string; artist_name: string }, index: number) => {
+        recentTracks.push({
+          id: `${mixtape.id}-${index}`,
+          track_name: track.track_name,
+          artist_name: track.artist_name,
+          mixtape_title: mixtape.title || 'Unknown',
+          created_at: mixtape.created_at || '',
+        });
+      });
     });
 
     return NextResponse.json({

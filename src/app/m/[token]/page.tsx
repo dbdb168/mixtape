@@ -70,18 +70,20 @@ export async function generateMetadata({
 
   const senderName = mixtape.sender_name || 'Someone';
 
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://mixtape.thisisluminary.co';
+
   return {
     title: `🎵 ${senderName} sent you a mixtape!`,
     description: `${trackCount} handpicked tracks, made just for you. Tap to listen.`,
     openGraph: {
       title: `🎵 ${senderName} sent you a mixtape!`,
       description: `${trackCount} handpicked tracks, made just for you. Tap to listen.`,
+      url: `${baseUrl}/m/${token}`,
       type: 'website',
       siteName: 'Mixtape',
-      images: mixtape.photo_url ? [{ url: mixtape.photo_url }] : undefined,
     },
     twitter: {
-      card: 'summary',
+      card: 'summary_large_image',
       title: `🎵 ${senderName} sent you a mixtape!`,
       description: `${trackCount} handpicked tracks, made just for you. Tap to listen.`,
     },

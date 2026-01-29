@@ -164,25 +164,6 @@ export function CreateMixtapeClient() {
     }
   };
 
-  // Update mixtape details (called when form fields change)
-  const updateMixtape = async (updates: { senderName?: string; recipientName?: string; message?: string }) => {
-    if (!shareUrl) return;
-
-    // Extract share token from URL
-    const shareToken = shareUrl.split('/m/')[1];
-    if (!shareToken) return;
-
-    try {
-      await fetch('/api/mixtapes', {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ shareToken, ...updates }),
-      });
-    } catch (error) {
-      console.error('Failed to update mixtape:', error);
-    }
-  };
-
   const handleEject = async () => {
     if (tracks.length === 0) {
       toast.error('Add at least one track first!');
@@ -456,7 +437,6 @@ export function CreateMixtapeClient() {
                         type="text"
                         value={senderName}
                         onChange={(e) => setSenderName(e.target.value)}
-                        onBlur={() => updateMixtape({ senderName: senderName.trim() || undefined })}
                         placeholder="Tim"
                         className="form-input"
                       />
@@ -469,7 +449,6 @@ export function CreateMixtapeClient() {
                         type="text"
                         value={recipientName}
                         onChange={(e) => setRecipientName(e.target.value)}
-                        onBlur={() => updateMixtape({ recipientName: recipientName.trim() || undefined })}
                         placeholder="Sarah"
                         className="form-input"
                       />
@@ -484,7 +463,6 @@ export function CreateMixtapeClient() {
                     <textarea
                       value={message}
                       onChange={(e) => setMessage(e.target.value.slice(0, 200))}
-                      onBlur={() => updateMixtape({ message: message.trim() || undefined })}
                       placeholder="Write a personal note..."
                       className="form-input resize-none"
                       rows={3}
@@ -555,6 +533,25 @@ export function CreateMixtapeClient() {
                     <button
                       onClick={async () => {
                         if (!shareUrl) return;
+
+                        // Save personalization before sharing
+                        const shareToken = shareUrl.split('/m/')[1];
+                        if (shareToken && (senderName.trim() || recipientName.trim() || message.trim())) {
+                          try {
+                            await fetch('/api/mixtapes/update', {
+                              method: 'POST',
+                              headers: { 'Content-Type': 'application/json' },
+                              body: JSON.stringify({
+                                shareToken,
+                                senderName: senderName.trim() || undefined,
+                                recipientName: recipientName.trim() || undefined,
+                                message: message.trim() || undefined,
+                              }),
+                            });
+                          } catch {
+                            // Continue sharing even if update fails
+                          }
+                        }
 
                         const name = senderName.trim() || 'Someone';
                         const shareText = `${name} sent you a mixtape! 🎵`;

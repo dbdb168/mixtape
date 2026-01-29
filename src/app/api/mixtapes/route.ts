@@ -34,8 +34,8 @@ export async function POST(request: NextRequest) {
 
     const { title, senderName, recipientName, recipientEmail, recipientPhone, message, tracks } = body;
 
-    // Generate share token
-    const shareToken = nanoid(8);
+    // Generate share token (12 chars = ~71 bits of entropy)
+    const shareToken = nanoid(12);
 
     // Create Supabase client with service role key
     const supabase = createClient(
@@ -139,6 +139,14 @@ function validateRequest(body: CreateMixtapeRequest): string | null {
     return 'Title must be 50 characters or less';
   }
 
+  // Sender name validation
+  if (!body.senderName || typeof body.senderName !== 'string') {
+    return 'Sender name is required';
+  }
+  if (body.senderName.length > 50) {
+    return 'Sender name must be 50 characters or less';
+  }
+
   // Recipient name validation
   if (!body.recipientName || typeof body.recipientName !== 'string') {
     return 'Recipient name is required';
@@ -182,45 +190,4 @@ function validateRequest(body: CreateMixtapeRequest): string | null {
   }
 
   return null;
-}
-
-// PATCH - Update mixtape details (sender name, recipient name, message)
-export async function PATCH(request: NextRequest) {
-  try {
-    const body = await request.json();
-    const { shareToken, senderName, recipientName, message } = body;
-
-    if (!shareToken) {
-      return NextResponse.json({ error: 'Share token is required' }, { status: 400 });
-    }
-
-    const supabase = createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.SUPABASE_SERVICE_ROLE_KEY!
-    );
-
-    const updateData: Record<string, string> = {};
-    if (senderName !== undefined) updateData.sender_name = senderName;
-    if (recipientName !== undefined) updateData.recipient_name = recipientName;
-    if (message !== undefined) updateData.message = message;
-
-    if (Object.keys(updateData).length === 0) {
-      return NextResponse.json({ error: 'No fields to update' }, { status: 400 });
-    }
-
-    const { error } = await supabase
-      .from('mixtapes')
-      .update(updateData)
-      .eq('share_token', shareToken);
-
-    if (error) {
-      console.error('Mixtape update error:', error);
-      return NextResponse.json({ error: 'Failed to update mixtape' }, { status: 500 });
-    }
-
-    return NextResponse.json({ success: true });
-  } catch (error) {
-    console.error('Update mixtape error:', error);
-    return NextResponse.json({ error: 'Failed to update mixtape' }, { status: 500 });
-  }
 }

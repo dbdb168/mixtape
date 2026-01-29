@@ -1,6 +1,21 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
-import { cookies } from 'next/headers';
+import { EventType } from '@/lib/supabase/types';
+
+// Allowed event types for validation
+const ALLOWED_EVENT_TYPES: EventType[] = [
+  'page_view',
+  'apple_music_connected',
+  'track_added',
+  'track_removed',
+  'mixtape_created',
+  'share_clicked',
+  'mixtape_viewed',
+  'track_played',
+  'cta_clicked',
+  'error_occurred',
+  'newsletter_signup',
+];
 
 interface EventRequest {
   eventType: string;
@@ -21,9 +36,13 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Get userId from cookies (optional)
-    const cookieStore = await cookies();
-    const userId = cookieStore.get('user_id')?.value || null;
+    // Validate eventType is in allowed list
+    if (!ALLOWED_EVENT_TYPES.includes(eventType as EventType)) {
+      return NextResponse.json(
+        { error: 'Invalid event type' },
+        { status: 400 }
+      );
+    }
 
     // Create Supabase client with service role key
     const supabase = createClient(
@@ -36,12 +55,10 @@ export async function POST(request: NextRequest) {
       event_type: eventType,
       metadata,
       mixtape_id: mixtapeId || null,
-      user_id: userId,
     });
 
     return NextResponse.json({ success: true });
-  } catch (error) {
-    console.error('Event tracking error:', error);
+  } catch {
     return NextResponse.json(
       { error: 'Failed to track event' },
       { status: 500 }
