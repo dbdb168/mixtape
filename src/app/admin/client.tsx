@@ -40,12 +40,23 @@ interface RecentMixtape {
   created_at: string;
 }
 
+interface Funnel {
+  createPageLoaded: number;
+  searchStarted: number;
+  trackAdded: number;
+  sendTapeClicked: number;
+  personalizeLoaded: number;
+  shareAttempted: number;
+  searchErrors: number;
+}
+
 interface AnalyticsData {
   metrics: Metrics;
   targets: Targets;
   recentErrors: RecentError[];
   recentTracks: RecentTrack[];
   recentMixtapes: RecentMixtape[];
+  funnel?: Funnel;
 }
 
 // Default values to prevent crashes from missing data
@@ -205,6 +216,7 @@ export default function AdminDashboard() {
   const recentErrors = data.recentErrors || [];
   const recentTracks = data.recentTracks || [];
   const recentMixtapes = data.recentMixtapes || [];
+  const funnel = data.funnel;
 
   return (
     <div className="min-h-screen bg-black p-8">
@@ -244,6 +256,54 @@ export default function AdminDashboard() {
             isDecimal
           />
         </div>
+
+        {/* Create Funnel (Last 24h) */}
+        {funnel && (
+          <div className="border border-white/50 p-4 mb-8">
+            <h3 className="font-pixel text-xs text-gray-400 mb-4 border-b border-gray-600 pb-2">
+              CREATE FUNNEL (LAST 24H)
+            </h3>
+            <div className="space-y-3">
+              {[
+                { label: 'Page Loaded', value: funnel.createPageLoaded, color: 'bg-white' },
+                { label: 'Searched', value: funnel.searchStarted, color: 'bg-blue-400' },
+                { label: 'Added Track', value: funnel.trackAdded, color: 'bg-green-400' },
+                { label: 'Clicked Send', value: funnel.sendTapeClicked, color: 'bg-yellow-400' },
+                { label: 'Personalize', value: funnel.personalizeLoaded, color: 'bg-orange-400' },
+                { label: 'Share Attempted', value: funnel.shareAttempted, color: 'bg-primary' },
+              ].map((step, index, arr) => {
+                const maxValue = arr[0].value || 1;
+                const percent = maxValue > 0 ? (step.value / maxValue) * 100 : 0;
+                const dropoff = index > 0 && arr[index - 1].value > 0
+                  ? Math.round((1 - step.value / arr[index - 1].value) * 100)
+                  : 0;
+                return (
+                  <div key={step.label} className="flex items-center gap-3">
+                    <div className="w-28 text-xs text-gray-400">{step.label}</div>
+                    <div className="flex-1 h-6 bg-white/5 relative">
+                      <div
+                        className={`h-full ${step.color} transition-all duration-500`}
+                        style={{ width: `${percent}%` }}
+                      />
+                      <span className="absolute inset-0 flex items-center justify-center text-xs font-bold text-black mix-blend-difference">
+                        {step.value}
+                      </span>
+                    </div>
+                    {index > 0 && dropoff > 0 && (
+                      <div className="w-16 text-xs text-red-400 text-right">-{dropoff}%</div>
+                    )}
+                    {index === 0 && <div className="w-16" />}
+                  </div>
+                );
+              })}
+              {funnel.searchErrors > 0 && (
+                <div className="mt-2 text-xs text-red-400">
+                  ⚠️ {funnel.searchErrors} search errors
+                </div>
+              )}
+            </div>
+          </div>
+        )}
 
         {/* Recent Mixtapes */}
         <div className="border border-white/50 p-4 mb-8">

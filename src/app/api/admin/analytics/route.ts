@@ -37,6 +37,9 @@ export async function GET() {
       process.env.SUPABASE_SERVICE_ROLE_KEY!
     );
 
+    // Calculate date 24 hours ago for funnel
+    const last24Hours = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
+
     // Query all required data in parallel
     const [
       mixtapeCountResult,
@@ -45,6 +48,14 @@ export async function GET() {
       recentErrorsResult,
       tracksResult,
       recentTracksResult,
+      // Funnel events (last 24 hours)
+      createPageLoadedResult,
+      searchStartedResult,
+      trackAddedResult,
+      sendTapeClickedResult,
+      personalizeLoadedResult,
+      shareAttemptedResult,
+      searchErrorResult,
     ] = await Promise.all([
       // Mixtape count
       supabase.from('mixtapes').select('*', { count: 'exact', head: true }),
@@ -73,6 +84,21 @@ export async function GET() {
         .select('id, title, created_at, sender_name, recipient_name, recipient_email, tracks(track_name, artist_name)')
         .order('created_at', { ascending: false })
         .limit(20),
+      // Funnel events (last 24 hours)
+      supabase.from('events').select('*', { count: 'exact', head: true })
+        .eq('event_type', 'create_page_loaded').gte('created_at', last24Hours),
+      supabase.from('events').select('*', { count: 'exact', head: true })
+        .eq('event_type', 'search_started').gte('created_at', last24Hours),
+      supabase.from('events').select('*', { count: 'exact', head: true })
+        .eq('event_type', 'track_added').gte('created_at', last24Hours),
+      supabase.from('events').select('*', { count: 'exact', head: true })
+        .eq('event_type', 'send_tape_clicked').gte('created_at', last24Hours),
+      supabase.from('events').select('*', { count: 'exact', head: true })
+        .eq('event_type', 'personalize_page_loaded').gte('created_at', last24Hours),
+      supabase.from('events').select('*', { count: 'exact', head: true })
+        .eq('event_type', 'share_attempted').gte('created_at', last24Hours),
+      supabase.from('events').select('*', { count: 'exact', head: true })
+        .eq('event_type', 'search_error').gte('created_at', last24Hours),
     ]);
 
     const mixtapesCreated = mixtapeCountResult.count || 0;
@@ -142,12 +168,24 @@ export async function GET() {
       created_at: mixtape.created_at,
     }));
 
+    // Build funnel data (last 24 hours)
+    const funnel = {
+      createPageLoaded: createPageLoadedResult.count || 0,
+      searchStarted: searchStartedResult.count || 0,
+      trackAdded: trackAddedResult.count || 0,
+      sendTapeClicked: sendTapeClickedResult.count || 0,
+      personalizeLoaded: personalizeLoadedResult.count || 0,
+      shareAttempted: shareAttemptedResult.count || 0,
+      searchErrors: searchErrorResult.count || 0,
+    };
+
     return NextResponse.json({
       metrics,
       targets,
       recentErrors,
       recentTracks,
       recentMixtapes,
+      funnel,
     });
   } catch (error) {
     console.error('Admin analytics error:', error);
