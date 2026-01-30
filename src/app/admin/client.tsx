@@ -26,6 +26,17 @@ interface RecentTrack {
   track_name: string;
   artist_name: string;
   mixtape_title: string;
+  sender_name: string;
+  created_at: string;
+}
+
+interface RecentMixtape {
+  id: string;
+  title: string;
+  sender_name: string;
+  recipient_name: string | null;
+  has_email: boolean;
+  track_count: number;
   created_at: string;
 }
 
@@ -34,6 +45,7 @@ interface AnalyticsData {
   targets: Targets;
   recentErrors: RecentError[];
   recentTracks: RecentTrack[];
+  recentMixtapes: RecentMixtape[];
 }
 
 // Default values to prevent crashes from missing data
@@ -117,10 +129,13 @@ function MetricCard({
   );
 }
 
+const REFRESH_INTERVAL = 30000; // 30 seconds
+
 export default function AdminDashboard() {
   const [data, setData] = useState<AnalyticsData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
 
   useEffect(() => {
     async function fetchAnalytics() {
@@ -136,6 +151,7 @@ export default function AdminDashboard() {
         const result = await response.json();
         console.log('[Admin] Data received:', result);
         setData(result);
+        setLastUpdated(new Date());
       } catch (err) {
         console.error('[Admin] Fetch error:', err);
         setError(err instanceof Error ? err.message : 'An error occurred');
@@ -146,6 +162,11 @@ export default function AdminDashboard() {
     }
 
     fetchAnalytics();
+
+    // Auto-refresh every 30 seconds
+    const intervalId = setInterval(fetchAnalytics, REFRESH_INTERVAL);
+
+    return () => clearInterval(intervalId);
   }, []);
 
   if (loading) {
@@ -183,6 +204,7 @@ export default function AdminDashboard() {
   };
   const recentErrors = data.recentErrors || [];
   const recentTracks = data.recentTracks || [];
+  const recentMixtapes = data.recentMixtapes || [];
 
   return (
     <div className="min-h-screen bg-black p-8">
@@ -192,6 +214,11 @@ export default function AdminDashboard() {
           <h1 className="font-pixel text-2xl text-white text-center tracking-wider">
             ADMIN DASHBOARD
           </h1>
+          {lastUpdated && (
+            <p className="text-center text-xs text-gray-500 mt-2">
+              Last updated: {lastUpdated.toLocaleTimeString()} · Auto-refreshes every 30s
+            </p>
+          )}
         </div>
 
         {/* Metrics Grid */}
@@ -218,6 +245,74 @@ export default function AdminDashboard() {
           />
         </div>
 
+        {/* Recent Mixtapes */}
+        <div className="border border-white/50 p-4 mb-8">
+          <h3 className="font-pixel text-xs text-gray-400 mb-4 border-b border-gray-600 pb-2">
+            RECENT MIXTAPES ({recentMixtapes.length})
+          </h3>
+          {recentMixtapes.length === 0 ? (
+            <p className="text-gray-400 text-sm">No mixtapes yet</p>
+          ) : (
+            <div className="overflow-x-auto max-h-96 overflow-y-auto">
+              <table className="w-full text-sm">
+                <thead className="sticky top-0 bg-black">
+                  <tr className="border-b border-gray-600">
+                    <th className="text-left py-2 px-4 font-pixel text-xs text-gray-400">
+                      TITLE
+                    </th>
+                    <th className="text-left py-2 px-4 font-pixel text-xs text-gray-400">
+                      FROM
+                    </th>
+                    <th className="text-left py-2 px-4 font-pixel text-xs text-gray-400">
+                      TO
+                    </th>
+                    <th className="text-left py-2 px-4 font-pixel text-xs text-gray-400">
+                      TRACKS
+                    </th>
+                    <th className="text-left py-2 px-4 font-pixel text-xs text-gray-400">
+                      EMAIL
+                    </th>
+                    <th className="text-left py-2 px-4 font-pixel text-xs text-gray-400">
+                      DATE
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {recentMixtapes.map((mixtape) => (
+                    <tr
+                      key={mixtape.id}
+                      className="border-b border-gray-600/50 hover:bg-white/5"
+                    >
+                      <td className="py-2 px-4 text-primary">
+                        {mixtape.title}
+                      </td>
+                      <td className="py-2 px-4 text-white">
+                        {mixtape.sender_name}
+                      </td>
+                      <td className="py-2 px-4 text-gray-300">
+                        {mixtape.recipient_name || '-'}
+                      </td>
+                      <td className="py-2 px-4 text-gray-400">
+                        {mixtape.track_count}
+                      </td>
+                      <td className="py-2 px-4">
+                        {mixtape.has_email ? (
+                          <span className="text-green-400">Yes</span>
+                        ) : (
+                          <span className="text-gray-500">No</span>
+                        )}
+                      </td>
+                      <td className="py-2 px-4 text-gray-400">
+                        {mixtape.created_at ? new Date(mixtape.created_at).toLocaleDateString() : '-'}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </div>
+
         {/* Recent Tracks */}
         <div className="border border-white/50 p-4 mb-8">
           <h3 className="font-pixel text-xs text-gray-400 mb-4 border-b border-gray-600 pb-2">
@@ -240,6 +335,9 @@ export default function AdminDashboard() {
                       MIXTAPE
                     </th>
                     <th className="text-left py-2 px-4 font-pixel text-xs text-gray-400">
+                      BY
+                    </th>
+                    <th className="text-left py-2 px-4 font-pixel text-xs text-gray-400">
                       DATE
                     </th>
                   </tr>
@@ -258,6 +356,9 @@ export default function AdminDashboard() {
                       </td>
                       <td className="py-2 px-4 text-primary">
                         {track.mixtape_title}
+                      </td>
+                      <td className="py-2 px-4 text-gray-400">
+                        {track.sender_name}
                       </td>
                       <td className="py-2 px-4 text-gray-400">
                         {track.created_at ? new Date(track.created_at).toLocaleDateString() : '-'}

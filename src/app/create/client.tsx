@@ -169,15 +169,8 @@ export function CreateMixtapeClient() {
       toast.error('Add at least one track first!');
       return;
     }
-
-    setIsSubmitting(true);
-    // Create mixtape immediately so share link is available
-    const url = await createMixtape();
-    if (url) {
-      setShareUrl(url);
-      setStep('personalize');
-    }
-    setIsSubmitting(false);
+    // Don't create mixtape yet - wait for personalization
+    setStep('personalize');
   };
 
   // Recording step - Main boombox interface
@@ -422,143 +415,155 @@ export function CreateMixtapeClient() {
             <div className="space-y-6">
               {/* Heading */}
               <h2 className="text-3xl md:text-4xl font-bold tracking-tighter">
-                {shareUrl ? 'Your mixtape is ready. Send it.' : 'Creating...'}
+                {shareUrl ? 'Your mixtape is ready. Send it.' : 'Who is this mixtape for?'}
               </h2>
 
-              {shareUrl && (
-                <>
-                  {/* Name fields */}
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <label className="text-[10px] font-bold text-white/40 uppercase tracking-[0.2em] block">
-                        Your Name
-                      </label>
-                      <input
-                        type="text"
-                        value={senderName}
-                        onChange={(e) => setSenderName(e.target.value)}
-                        placeholder="Tim"
-                        className="form-input"
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <label className="text-[10px] font-bold text-white/40 uppercase tracking-[0.2em] block">
-                        Their Name
-                      </label>
-                      <input
-                        type="text"
-                        value={recipientName}
-                        onChange={(e) => setRecipientName(e.target.value)}
-                        placeholder="Sarah"
-                        className="form-input"
-                      />
-                    </div>
-                  </div>
-
-                  {/* Liner Notes */}
+              <>
+                {/* Name fields */}
+                <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <label className="text-[10px] font-bold text-white/40 uppercase tracking-[0.2em] block">
-                      Liner Notes
+                      Your Name
                     </label>
-                    <textarea
-                      value={message}
-                      onChange={(e) => setMessage(e.target.value.slice(0, 200))}
-                      placeholder="Write a personal note..."
-                      className="form-input resize-none"
-                      rows={3}
-                      maxLength={200}
+                    <input
+                      type="text"
+                      value={senderName}
+                      onChange={(e) => setSenderName(e.target.value)}
+                      placeholder="Tim"
+                      className="form-input"
+                      disabled={!!shareUrl}
                     />
                   </div>
-
-                  {/* Send via Email - Primary Action */}
-                  <div className="space-y-3 p-5 bg-white/5 border border-white/10 rounded-xl mt-4">
-                    <div className="flex items-center gap-3">
-                      <input
-                        type="email"
-                        value={recipientEmail}
-                        onChange={(e) => setRecipientEmail(e.target.value)}
-                        placeholder="Their email address"
-                        className="form-input text-sm flex-1"
-                        disabled={emailSent}
-                      />
-                      <button
-                        onClick={async () => {
-                          if (!recipientEmail.trim() || !senderName.trim()) {
-                            toast.error('Please enter your name and their email');
-                            return;
-                          }
-                          setIsSubmitting(true);
-                          try {
-                            const response = await fetch('/api/mixtapes/send-email', {
-                              method: 'POST',
-                              headers: { 'Content-Type': 'application/json' },
-                              body: JSON.stringify({
-                                shareUrl,
-                                senderName: senderName.trim(),
-                                recipientName: recipientName.trim() || 'Friend',
-                                recipientEmail: recipientEmail.trim(),
-                                mixtapeTitle: mixtapeTitle || 'My Mixtape',
-                                message: message.trim(),
-                              }),
-                            });
-                            if (response.ok) {
-                              setEmailSent(true);
-                              toast.success('Email sent!');
-                            } else {
-                              toast.error('Failed to send email');
-                            }
-                          } catch {
-                            toast.error('Failed to send email');
-                          } finally {
-                            setIsSubmitting(false);
-                          }
-                        }}
-                        disabled={isSubmitting || emailSent || !recipientEmail.trim()}
-                        className={`px-6 py-3 rounded-lg text-xs font-bold uppercase tracking-widest transition-colors whitespace-nowrap ${
-                          emailSent
-                            ? 'bg-green-500/20 text-green-400 border border-green-500/50'
-                            : recipientEmail.trim()
-                              ? 'bg-primary hover:bg-primary/80 text-white'
-                              : 'bg-white/10 text-white/40 cursor-not-allowed'
-                        }`}
-                      >
-                        {emailSent ? '✓ Sent!' : isSubmitting ? 'Sending...' : 'Send Email'}
-                      </button>
-                    </div>
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-bold text-white/40 uppercase tracking-[0.2em] block">
+                      Their Name
+                    </label>
+                    <input
+                      type="text"
+                      value={recipientName}
+                      onChange={(e) => setRecipientName(e.target.value)}
+                      placeholder="Sarah"
+                      className="form-input"
+                      disabled={!!shareUrl}
+                    />
                   </div>
+                </div>
 
-                  {/* Share via Message - Secondary Option */}
-                  <div className="flex items-center justify-center gap-3 pt-4 text-white/40">
-                    <span className="text-xs">or</span>
+                {/* Liner Notes */}
+                <div className="space-y-2">
+                  <label className="text-[10px] font-bold text-white/40 uppercase tracking-[0.2em] block">
+                    Liner Notes
+                  </label>
+                  <textarea
+                    value={message}
+                    onChange={(e) => setMessage(e.target.value.slice(0, 200))}
+                    placeholder="Write a personal note..."
+                    className="form-input resize-none"
+                    rows={3}
+                    maxLength={200}
+                    disabled={!!shareUrl}
+                  />
+                </div>
+
+                {/* Send via Email - Primary Action */}
+                <div className="space-y-3 p-5 bg-white/5 border border-white/10 rounded-xl mt-4">
+                  <div className="flex items-center gap-3">
+                    <input
+                      type="email"
+                      value={recipientEmail}
+                      onChange={(e) => setRecipientEmail(e.target.value)}
+                      placeholder="Their email address"
+                      className="form-input text-sm flex-1"
+                      disabled={emailSent || !!shareUrl}
+                    />
                     <button
                       onClick={async () => {
-                        if (!shareUrl) return;
-
-                        // Save personalization before sharing
-                        const shareToken = shareUrl.split('/m/')[1];
-                        if (shareToken && (senderName.trim() || recipientName.trim() || message.trim())) {
-                          try {
-                            await fetch('/api/mixtapes/update', {
-                              method: 'POST',
-                              headers: { 'Content-Type': 'application/json' },
-                              body: JSON.stringify({
-                                shareToken,
-                                senderName: senderName.trim() || undefined,
-                                recipientName: recipientName.trim() || undefined,
-                                message: message.trim() || undefined,
-                              }),
-                            });
-                          } catch {
-                            // Continue sharing even if update fails
-                          }
+                        if (!recipientEmail.trim() || !senderName.trim()) {
+                          toast.error('Please enter your name and their email');
+                          return;
                         }
+                        setIsSubmitting(true);
+                        try {
+                          // Create mixtape first with all personalization
+                          const url = await createMixtape(
+                            senderName.trim(),
+                            recipientName.trim() || 'Friend',
+                            recipientEmail.trim(),
+                            message.trim()
+                          );
+                          if (!url) {
+                            setIsSubmitting(false);
+                            return;
+                          }
+                          setShareUrl(url);
+
+                          // Now send the email
+                          const response = await fetch('/api/mixtapes/send-email', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                              shareUrl: url,
+                              senderName: senderName.trim(),
+                              recipientName: recipientName.trim() || 'Friend',
+                              recipientEmail: recipientEmail.trim(),
+                              mixtapeTitle: mixtapeTitle || 'My Mixtape',
+                              message: message.trim(),
+                            }),
+                          });
+                          if (response.ok) {
+                            setEmailSent(true);
+                            toast.success('Email sent!');
+                          } else {
+                            toast.error('Failed to send email');
+                          }
+                        } catch {
+                          toast.error('Failed to send email');
+                        } finally {
+                          setIsSubmitting(false);
+                        }
+                      }}
+                      disabled={isSubmitting || emailSent || !recipientEmail.trim()}
+                      className={`px-6 py-3 rounded-lg text-xs font-bold uppercase tracking-widest transition-colors whitespace-nowrap ${
+                        emailSent
+                          ? 'bg-green-500/20 text-green-400 border border-green-500/50'
+                          : recipientEmail.trim()
+                            ? 'bg-primary hover:bg-primary/80 text-white'
+                            : 'bg-white/10 text-white/40 cursor-not-allowed'
+                      }`}
+                    >
+                      {emailSent ? '✓ Sent!' : isSubmitting ? 'Creating...' : 'Send Email'}
+                    </button>
+                  </div>
+                </div>
+
+                {/* Share via Message - Secondary Option */}
+                <div className="flex items-center justify-center gap-3 pt-4 text-white/40">
+                  <span className="text-xs">or</span>
+                  <button
+                    onClick={async () => {
+                      if (isSubmitting) return;
+                      setIsSubmitting(true);
+
+                      try {
+                        // Create mixtape with personalization data
+                        const url = await createMixtape(
+                          senderName.trim() || 'Someone',
+                          recipientName.trim() || 'You',
+                          undefined, // no email for link share
+                          message.trim()
+                        );
+                        if (!url) {
+                          setIsSubmitting(false);
+                          return;
+                        }
+                        setShareUrl(url);
 
                         const name = senderName.trim() || 'Someone';
                         const shareText = `${name} sent you a mixtape! 🎵`;
                         const shareData = {
                           title: mixtapeTitle || 'A Mixtape For You',
                           text: shareText,
-                          url: shareUrl,
+                          url: url,
                         };
 
                         if (navigator.share && navigator.canShare?.(shareData)) {
@@ -566,41 +571,70 @@ export function CreateMixtapeClient() {
                             await navigator.share(shareData);
                           } catch (err) {
                             if ((err as Error).name !== 'AbortError') {
-                              await navigator.clipboard.writeText(`${shareText}\n${shareUrl}`);
+                              await navigator.clipboard.writeText(`${shareText}\n${url}`);
                               toast.success('Link copied!');
                             }
                           }
                         } else {
-                          await navigator.clipboard.writeText(`${shareText}\n${shareUrl}`);
+                          await navigator.clipboard.writeText(`${shareText}\n${url}`);
                           toast.success('Link copied!');
                         }
-                      }}
-                      className="text-xs text-primary hover:text-primary/80 underline underline-offset-2 transition-colors"
-                    >
-                      share via message
-                    </button>
-                  </div>
+                      } catch {
+                        toast.error('Failed to create mixtape');
+                      } finally {
+                        setIsSubmitting(false);
+                      }
+                    }}
+                    disabled={isSubmitting}
+                    className="text-xs text-primary hover:text-primary/80 underline underline-offset-2 transition-colors disabled:opacity-50"
+                  >
+                    {isSubmitting ? 'creating...' : 'share via message'}
+                  </button>
+                </div>
 
-                  {/* AI Cookbook promo */}
-                  <div className="bg-white/5 border border-white/10 rounded-xl p-6 space-y-3 mt-4">
-                    <div className="flex items-center gap-3">
-                      <img src="/ai-cookbook-logo.jpeg" alt="AI Cookbook" className="size-8 rounded" />
-                      <h4 className="text-sm font-bold">The AI Cookbook</h4>
-                    </div>
-                    <p className="text-sm text-white/60 leading-relaxed">
-                      I am not a developer. I cannot write code. I made Mixtape as a project to inspire other non-developers to learn to build for themselves. You can read about my journey at The AI Cookbook.{' '}
-                      <a
-                        href="https://theaicookbook.substack.com"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-primary hover:underline font-bold"
+                {/* Show share URL after creation for additional sharing */}
+                {shareUrl && (
+                  <div className="p-4 bg-green-500/10 border border-green-500/30 rounded-xl mt-4">
+                    <p className="text-sm text-green-400 mb-2">Mixtape created! Share again:</p>
+                    <div className="flex items-center gap-2">
+                      <input
+                        type="text"
+                        value={shareUrl}
+                        readOnly
+                        className="form-input text-xs flex-1 bg-black/50"
+                      />
+                      <button
+                        onClick={() => {
+                          navigator.clipboard.writeText(shareUrl);
+                          toast.success('Link copied!');
+                        }}
+                        className="px-3 py-2 bg-green-500/20 text-green-400 rounded text-xs font-bold"
                       >
-                        Subscribe here.
-                      </a>
-                    </p>
+                        Copy
+                      </button>
+                    </div>
                   </div>
-                </>
-              )}
+                )}
+
+                {/* AI Cookbook promo */}
+                <div className="bg-white/5 border border-white/10 rounded-xl p-6 space-y-3 mt-4">
+                  <div className="flex items-center gap-3">
+                    <img src="/ai-cookbook-logo.jpeg" alt="AI Cookbook" className="size-8 rounded" />
+                    <h4 className="text-sm font-bold">The AI Cookbook</h4>
+                  </div>
+                  <p className="text-sm text-white/60 leading-relaxed">
+                    I am not a developer. I cannot write code. I made Mixtape as a project to inspire other non-developers to learn to build for themselves. You can read about my journey at The AI Cookbook.{' '}
+                    <a
+                      href="https://theaicookbook.substack.com"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-primary hover:underline font-bold"
+                    >
+                      Subscribe here.
+                    </a>
+                  </p>
+                </div>
+              </>
             </div>
           </div>
         </main>

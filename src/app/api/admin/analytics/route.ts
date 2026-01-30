@@ -25,6 +25,7 @@ interface RecentTrack {
   track_name: string;
   artist_name: string;
   mixtape_title: string;
+  sender_name: string;
   created_at: string;
 }
 
@@ -69,7 +70,7 @@ export async function GET() {
       // Recent mixtapes with tracks (last 20 mixtapes)
       supabase
         .from('mixtapes')
-        .select('id, title, created_at, sender_name, tracks(track_name, artist_name)')
+        .select('id, title, created_at, sender_name, recipient_name, recipient_email, tracks(track_name, artist_name)')
         .order('created_at', { ascending: false })
         .limit(20),
     ]);
@@ -123,16 +124,30 @@ export async function GET() {
           track_name: track.track_name,
           artist_name: track.artist_name,
           mixtape_title: mixtape.title || 'Unknown',
+          sender_name: mixtape.sender_name || 'Anonymous',
           created_at: mixtape.created_at || '',
         });
       });
     });
+
+    // Build recent mixtapes summary (email as boolean for privacy)
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const recentMixtapes = (recentTracksResult.data || []).map((mixtape: any) => ({
+      id: mixtape.id,
+      title: mixtape.title || 'Untitled',
+      sender_name: mixtape.sender_name || 'Anonymous',
+      recipient_name: mixtape.recipient_name || null,
+      has_email: !!mixtape.recipient_email,
+      track_count: (mixtape.tracks || []).length,
+      created_at: mixtape.created_at,
+    }));
 
     return NextResponse.json({
       metrics,
       targets,
       recentErrors,
       recentTracks,
+      recentMixtapes,
     });
   } catch (error) {
     console.error('Admin analytics error:', error);
