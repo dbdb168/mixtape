@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { useDebounce } from '@/hooks/useDebounce';
 import toast from 'react-hot-toast';
+import { trackEvent } from '@/lib/analytics/track';
 
 interface Track {
   id: string;
@@ -27,6 +28,7 @@ export function TrackSearch({ onAddTrack, disabledTrackIds, onSearchingChange, m
   const [isLoading, setIsLoading] = useState(false);
   const [playingPreview, setPlayingPreview] = useState<string | null>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
+  const hasTrackedFirstSearch = useRef(false);
 
   const debouncedQuery = useDebounce(query, 300);
 
@@ -40,6 +42,13 @@ export function TrackSearch({ onAddTrack, disabledTrackIds, onSearchingChange, m
     const search = async () => {
       setIsLoading(true);
       onSearchingChange?.(true);
+
+      // Track first search (key engagement signal)
+      if (!hasTrackedFirstSearch.current) {
+        hasTrackedFirstSearch.current = true;
+        trackEvent('search_started', { query: debouncedQuery.substring(0, 20) });
+      }
+
       try {
         const response = await fetch(`/api/search?q=${encodeURIComponent(debouncedQuery)}`);
         const data = await response.json();
@@ -47,9 +56,11 @@ export function TrackSearch({ onAddTrack, disabledTrackIds, onSearchingChange, m
         if (response.ok) {
           setResults(data.tracks);
         } else {
+          trackEvent('search_error', { error: data.error, query: debouncedQuery.substring(0, 20) });
           toast.error(data.error || 'Search failed');
         }
       } catch {
+        trackEvent('search_error', { error: 'network_error', query: debouncedQuery.substring(0, 20) });
         toast.error('Signal lost. Try tuning in again.');
       } finally {
         setIsLoading(false);

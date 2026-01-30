@@ -1,10 +1,11 @@
 'use client';
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
 import toast from 'react-hot-toast';
 import Link from 'next/link';
 import { TrackSearch } from '@/components/TrackSearch';
 import { TrackList } from '@/components/TrackList';
+import { trackEvent } from '@/lib/analytics/track';
 
 interface Track {
   id: string;
@@ -108,10 +109,36 @@ export function CreateMixtapeClient() {
   const [message, setMessage] = useState('');
   const [emailSent, setEmailSent] = useState(false);
 
+  // Funnel tracking refs
+  const hasTrackedPageLoad = useRef(false);
+  const hasTrackedFirstTrack = useRef(false);
+  const hasTrackedPersonalize = useRef(false);
+
+  // Track page load
+  useEffect(() => {
+    if (!hasTrackedPageLoad.current) {
+      hasTrackedPageLoad.current = true;
+      trackEvent('create_page_loaded');
+    }
+  }, []);
+
+  // Track when moving to personalize step
+  useEffect(() => {
+    if (step === 'personalize' && !hasTrackedPersonalize.current) {
+      hasTrackedPersonalize.current = true;
+      trackEvent('personalize_page_loaded', { trackCount: tracks.length });
+    }
+  }, [step, tracks.length]);
+
   const handleAddTrack = useCallback((track: Track) => {
     if (tracks.length >= MAX_TRACKS) {
       toast.error(`Maximum ${MAX_TRACKS} tracks allowed!`);
       return;
+    }
+    // Track first track added (key conversion moment)
+    if (tracks.length === 0 && !hasTrackedFirstTrack.current) {
+      hasTrackedFirstTrack.current = true;
+      trackEvent('track_added', { isFirst: true, trackName: track.name });
     }
     setTracks((prev) => [...prev, track]);
     setIsRecording(true);
@@ -169,6 +196,8 @@ export function CreateMixtapeClient() {
       toast.error('Add at least one track first!');
       return;
     }
+    // Track send tape clicked
+    trackEvent('send_tape_clicked', { trackCount: tracks.length, hasTitle: !!mixtapeTitle });
     // Don't create mixtape yet - wait for personalization
     setStep('personalize');
   };
@@ -482,6 +511,8 @@ export function CreateMixtapeClient() {
                           toast.error('Please enter your name and their email');
                           return;
                         }
+                        // Track share attempt
+                        trackEvent('share_attempted', { method: 'email', trackCount: tracks.length });
                         setIsSubmitting(true);
                         try {
                           // Create mixtape first with all personalization
@@ -542,6 +573,8 @@ export function CreateMixtapeClient() {
                   <button
                     onClick={async () => {
                       if (isSubmitting) return;
+                      // Track share attempt
+                      trackEvent('share_attempted', { method: 'link', trackCount: tracks.length });
                       setIsSubmitting(true);
 
                       try {

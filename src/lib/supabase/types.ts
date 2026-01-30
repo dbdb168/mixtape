@@ -51,4 +51,11 @@ export type EventType =
   | 'track_played'
   | 'cta_clicked'
   | 'error_occurred'
-  | 'newsletter_signup';
+  | 'newsletter_signup'
+  // Funnel tracking events
+  | 'create_page_loaded'
+  | 'search_started'
+  | 'send_tape_clicked'
+  | 'personalize_page_loaded'
+  | 'share_attempted'
+  | 'search_error';
