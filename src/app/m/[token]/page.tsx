@@ -72,6 +72,10 @@ export async function generateMetadata({
 
   const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://mixtape.thisisluminary.co';
 
+  // Use mixtape created_at as cache buster to force fresh preview
+  const cacheBuster = new Date(mixtape.created_at).getTime();
+  const ogImageUrl = `${baseUrl}/m/${token}/opengraph-image?v=${cacheBuster}`;
+
   return {
     title: `🎵 ${senderName} sent you a mixtape!`,
     description: `${trackCount} handpicked tracks, made just for you. Tap to listen.`,
@@ -81,11 +85,18 @@ export async function generateMetadata({
       url: `${baseUrl}/m/${token}`,
       type: 'website',
       siteName: 'Mixtape',
+      images: [{
+        url: ogImageUrl,
+        width: 1200,
+        height: 630,
+        alt: 'A mixtape made for you',
+      }],
     },
     twitter: {
       card: 'summary_large_image',
       title: `🎵 ${senderName} sent you a mixtape!`,
       description: `${trackCount} handpicked tracks, made just for you. Tap to listen.`,
+      images: [ogImageUrl],
     },
   };
 }
