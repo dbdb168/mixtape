@@ -31,7 +31,7 @@ Mixtape brings back the emotional art of making mixtapes for the streaming era. 
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/YOUR_USERNAME/mixtape.git
+   git clone https://github.com/dbdb168/mixtape.git
    cd mixtape
    ```
 
@@ -194,7 +194,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 - **Website:** [mixtape.thisisluminary.co](https://mixtape.thisisluminary.co)
 - **Newsletter:** [The AI Cookbook](https://theaicookbook.substack.com)
-- **Issues:** [GitHub Issues](https://github.com/YOUR_USERNAME/mixtape/issues)
+- **Issues:** [GitHub Issues](https://github.com/dbdb168/mixtape/issues)
 
 ---
 

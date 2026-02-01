@@ -25,13 +25,13 @@ Mixtape was built to bring back the emotional art of making mixtapes. When contr
 
 2. **Clone your fork**
    ```bash
-   git clone https://github.com/YOUR_USERNAME/mixtape.git
+   git clone https://github.com/dbdb168/mixtape.git
    cd mixtape
    ```
 
 3. **Add upstream remote**
    ```bash
-   git remote add upstream https://github.com/ORIGINAL_OWNER/mixtape.git
+   git remote add upstream https://github.com/dbdb168/mixtape.git
    ```
 
 4. **Install dependencies**
