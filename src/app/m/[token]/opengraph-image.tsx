@@ -5,6 +5,9 @@ export const alt = 'A mixtape made for you';
 export const size = { width: 1200, height: 630 };
 export const contentType = 'image/png';
 
+// Prevent aggressive caching by crawlers
+export const revalidate = 0;
+
 export default async function Image() {
   return new ImageResponse(
     (
