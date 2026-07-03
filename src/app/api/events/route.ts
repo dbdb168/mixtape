@@ -44,6 +44,25 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Validate metadata: must be a plain object and reasonably sized.
+    // This endpoint is unauthenticated, so cap what an anonymous caller can store.
+    if (
+      typeof metadata !== 'object' ||
+      metadata === null ||
+      Array.isArray(metadata)
+    ) {
+      return NextResponse.json(
+        { error: 'metadata must be a plain object' },
+        { status: 400 }
+      );
+    }
+    if (JSON.stringify(metadata).length > 2000) {
+      return NextResponse.json(
+        { error: 'metadata is too large' },
+        { status: 400 }
+      );
+    }
+
     // Create Supabase client with service role key
     const supabase = createClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
